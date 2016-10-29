@@ -1,5 +1,9 @@
 ## Deep Learning Capstone Project
 ### Background
+[Neural networks](https://en.wikipedia.org/wiki/Artificial_neural_network) are effective [function approximators](http://neuralnetworksanddeeplearning.com/chap4.html), but it turns out that the deeper the neural net is, the [more complicated](https://en.wikipedia.org/wiki/Deep_learning#Applications) are the tasks it can perform.
+
+Among these complicated tasks is digit recognition
+![digit recognition](http://techglam.com/wp-content/uploads/2013/10/reCAPTCHA.jpg)
 
 ### Problem Statement
 This project seeks to identify and output numbers which are contained in images.
