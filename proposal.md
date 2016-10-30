@@ -18,6 +18,8 @@ Once this is done, the model will be fed images from the wild to see how it perf
 ## Solution Statement
 This will be accomplished through the creation and training of a deep neural net to recognize numeric content within an image.
 
+Python 2.7 and publicly-available libraries will be used to accomplish this task.
+
 ## Benchmark Model
 [Goodfellow et al.](http://static.googleusercontent.com/media/research.google.com/en//pubs/archive/42241.pdf) achieved 97.84% per-digit recognition accuracy.  This project attempts to approximate, but not achieve, that performance.
 
