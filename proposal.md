@@ -9,7 +9,7 @@ Among these complicated tasks is digit recognition.
 This project seeks to identify and output numbers which are contained in images.
 
 ## Dataset and Inputs
-The [MNIST](http://yann.lecun.com/exdb/mnist/) dataset will be used to develop the neural network model.
+The [MNIST](http://yann.lecun.com/exdb/mnist/) dataset will be used to develop the neural network model.  
 <img src="https://www.tensorflow.org/versions/r0.11/images/MNIST.png" alt="MNIST example" width="200">
 
 Once a neural net model has been determined, the [SVHN](http://ufldl.stanford.edu/housenumbers/) dataset will be used to train the model.
@@ -61,7 +61,7 @@ More specifically, the project design will be structured as follows:
 
 4. **Localization** will be employed to display a box around detected sequences of digits.
 
-   This will be made possible by meta-data within the [SVHN](http://ufldl.stanford.edu/housenumbers/) dataset, and as [Goodfellow et al.](http://static.googleusercontent.com/media/research.google.com/en//pubs/archive/42241.pdf) suggest, will likely require additional hidden layers to perform the localization task.
+   This will be made possible by meta-data within the [SVHN](http://ufldl.stanford.edu/housenumbers/) dataset, and as [Goodfellow et al.](http://static.googleusercontent.com/media/research.google.com/en//pubs/archive/42241.pdf) suggest, will likely require additional hidden layers to perform the localization task.  
    <img src="http://i.imgur.com/EX5it8P.png" alt="Localization" width="400">
    
    
