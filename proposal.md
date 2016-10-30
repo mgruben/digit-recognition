@@ -36,7 +36,7 @@ More specifically, the project design will be structured as follows:
 
 1. **Design and test** a model architecture that can identify sequences of digits in an image.
  1. This will largely follow the work of [Goodfellow et al.](http://static.googleusercontent.com/media/research.google.com/en//pubs/archive/42241.pdf), as they have already developed an effective an efficient model for this task.
- 2. This project will use a "deep" neural network as implemented by the [TensorFlow](https://www.tensorflow.org) library.
+ 2. This project will use a deep neural network as implemented by the [TensorFlow](https://www.tensorflow.org) library.  "Deep" here refers to the fact that there are several hidden layers in the neural network.
  3. Model development will largely focus on the [MNIST](http://yann.lecun.com/exdb/mnist/) dataset, as it contains simplified depictions of the digits the neural net will eventually be expected to recognize.
  
     It is expected that performance will degrade when moving to the [SVHN](http://ufldl.stanford.edu/housenumbers/) dataset, so performance on the [MNIST](http://yann.lecun.com/exdb/mnist/) dataset will need to exceed 80%.
