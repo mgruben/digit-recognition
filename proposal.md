@@ -51,7 +51,7 @@ More specifically, the project design will be structured as follows:
 
    This phase will involve one or both of the following:
   1. hand-photographing digits available locally, or
-  2. Creating (e.g. drawing) digits, either [on-screen](https://www.youtube.com/watch?v=ocB8uDYXtt0) or on paper,
+  2. Creating (e.g. drawing) digits, either [on-screen](https://www.youtube.com/watch?v=ocB8uDYXtt0) or on paper.
  
    After obtaining images from the wild, these images will be processed so that they are in a form which the neural net expects, and they will be input to the neural net to examine its digit-recognition performance.
 
