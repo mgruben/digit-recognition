@@ -2,7 +2,7 @@
 ## Background
 [Neural networks](https://en.wikipedia.org/wiki/Artificial_neural_network) are effective [function approximators](http://neuralnetworksanddeeplearning.com/chap4.html), but it turns out that the deeper the neural net is, the [more complicated](https://en.wikipedia.org/wiki/Deep_learning#Applications) are the tasks it can perform.
 
-Among these complicated tasks is digit recognition
+Among these complicated tasks is digit recognition.  
 ![digit recognition](http://techglam.com/wp-content/uploads/2013/10/reCAPTCHA.jpg)
 
 ## Problem Statement
@@ -25,3 +25,9 @@ This will be accomplished through the creation and training of a deep neural net
 Performance will be evaluated on a per-digit-recognition basis, with a target accuracy of 90% or better.  
 
 ## Project Design
+The workflow for this project will closely approximate the steps set forth in the [Deep Learning Capstone Project](https://docs.google.com/document/d/1L11EjK0uObqjaBhHNcVPxeyIripGHSUaoEWGypuuVtk/pub) description.
+
+More specifically, the project design will be structured as follows:  
+
+1. Design and test a model architecture that can identify sequences of digits in an image.
+ 1. 
