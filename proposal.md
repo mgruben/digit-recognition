@@ -21,10 +21,10 @@ This will be accomplished through the creation and training of a deep neural net
 Python 2.7 and publicly-available libraries will be used to accomplish this task.
 
 ## Benchmark Model
-[Goodfellow et al.](http://static.googleusercontent.com/media/research.google.com/en//pubs/archive/42241.pdf) achieved 97.84% per-digit recognition accuracy.  This project attempts to approximate, but not achieve, that performance.
+[Goodfellow et al.](http://static.googleusercontent.com/media/research.google.com/en//pubs/archive/42241.pdf) achieved 91% whole-sequence recognition accuracy.  This project attempts to approximate, but not achieve, that performance.
 
 ## Evaluation Metrics
-Performance will be evaluated on a per-digit-recognition basis, with a target accuracy of 90% or better.  
+Performance will be evaluated on a whole-sequence recognition basis, with a target accuracy of 80% or better.
 
 ## Project Design
 The workflow for this project will closely approximate the steps set forth in the [Deep Learning Capstone Project](https://docs.google.com/document/d/1L11EjK0uObqjaBhHNcVPxeyIripGHSUaoEWGypuuVtk/pub) description.
