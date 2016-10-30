@@ -22,7 +22,7 @@ Python 2.7 and publicly-available libraries will be used to accomplish this task
 These are expected to include `numpy`, `jupyter`, `TensorFlow`, and `opencv`.
 
 ## Benchmark Model
-[Goodfellow et al.](http://static.googleusercontent.com/media/research.google.com/en//pubs/archive/42241.pdf) achieved 91% whole-sequence recognition accuracy.  This project attempts to approximate, but not achieve, that performance.
+[Goodfellow et al.](http://static.googleusercontent.com/media/research.google.com/en//pubs/archive/42241.pdf) achieved 91% whole-sequence recognition accuracy on the [SVHN](http://ufldl.stanford.edu/housenumbers/) dataset.  This project attempts to approximate, but not achieve, that performance.
 
 ## Evaluation Metrics
 Performance will be evaluated on a whole-sequence recognition basis, with a target accuracy of 80% or better.
@@ -41,11 +41,21 @@ More specifically, the project design will be structured as follows:
     
     It is expected that the neural network will employ **softmax regressions** in order to choose between competing interpretations of a given digit image.
     
-    It is also expected that, while perhaps not necessary for success on the [MNIST](http://yann.lecun.com/exdb/mnist/) dataset, **convolutional layers** may be necessary in order to detect digits within the [SVHN](http://ufldl.stanford.edu/housenumbers/) dataset.
-    
     For training on the [MNIST](http://yann.lecun.com/exdb/mnist/) dataset, the already-provided training and test data split will be used.
 
 2. Train a model on realistic data.
- 1. 
+ 1. This phase will focus on the [SVHN](http://ufldl.stanford.edu/housenumbers/) dataset, and will attempt to replicate the performance achieved on the [MNIST](http://yann.lecun.com/exdb/mnist/) dataset, while recognizing that the digits in [SVHN](http://ufldl.stanford.edu/housenumbers/) are more difficult to recognize.
+ 2. It is expected that additional model features, such as **convolutional layers** may be necessary in order to detect digits within the [SVHN](http://ufldl.stanford.edu/housenumbers/) dataset, which were not necessary for success on the [MNIST](http://yann.lecun.com/exdb/mnist/) dataset.
+
 3. Feed the model new number-containing images from the wild.
+ 1. This phase will involve one or both of the following:
+  1. hand-photographing digits available locally, or
+  2. Creating (e.g. drawing) digits, either [on-screen](https://www.youtube.com/watch?v=ocB8uDYXtt0) or on paper,
+ 
+   After obtaining images from the wild, these images will be processed so that they are in a form which the neural net expects, and they will be input to the neural net to examine its digit-recognition performance.
+
 4. Localization will be employed to display a box around detected sequences of digits.
+
+   This will be made possible by meta-data within the [SVHN](http://ufldl.stanford.edu/housenumbers/) dataset, and as [Goodfellow et al.](http://static.googleusercontent.com/media/research.google.com/en//pubs/archive/42241.pdf) suggest, will likely require additional hidden layers to perform the localization task.
+   
+   
