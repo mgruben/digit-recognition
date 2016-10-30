@@ -48,7 +48,8 @@ More specifically, the project design will be structured as follows:
  2. It is expected that additional model features, such as **convolutional layers** may be necessary in order to detect digits within the [SVHN](http://ufldl.stanford.edu/housenumbers/) dataset, which were not necessary for success on the [MNIST](http://yann.lecun.com/exdb/mnist/) dataset.
 
 3. Feed the model new number-containing images from the wild.
- 1. This phase will involve one or both of the following:
+
+   This phase will involve one or both of the following:
   1. hand-photographing digits available locally, or
   2. Creating (e.g. drawing) digits, either [on-screen](https://www.youtube.com/watch?v=ocB8uDYXtt0) or on paper,
  
