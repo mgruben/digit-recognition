@@ -10,8 +10,10 @@ This project seeks to identify and output numbers which are contained in images.
 
 ## Dataset and Inputs
 The [MNIST](http://yann.lecun.com/exdb/mnist/) dataset will be used to develop the neural network model.
+![MNIST example](https://www.tensorflow.org/versions/r0.11/images/MNIST.png)
 
 Once a neural net model has been determined, the [SVHN](http://ufldl.stanford.edu/housenumbers/) dataset will be used to train the model.
+![SVHN](http://ufldl.stanford.edu/housenumbers/examples_new.png)
 
 Once this is done, the model will be fed images from the wild to see how it performs.
 
@@ -45,7 +47,8 @@ More specifically, the project design will be structured as follows:
 
 2. **Train** a model on realistic data.
  1. This phase will focus on the [SVHN](http://ufldl.stanford.edu/housenumbers/) dataset, and will attempt to replicate the performance achieved on the [MNIST](http://yann.lecun.com/exdb/mnist/) dataset, while recognizing that the digits in [SVHN](http://ufldl.stanford.edu/housenumbers/) are more difficult to recognize.
- 2. It is expected that additional model features, such as **convolutional layers** may be necessary in order to detect digits within the [SVHN](http://ufldl.stanford.edu/housenumbers/) dataset, which were not necessary for success on the [MNIST](http://yann.lecun.com/exdb/mnist/) dataset.
+ 2. As suggested by [Goodfellow et al.](http://static.googleusercontent.com/media/research.google.com/en//pubs/archive/42241.pdf) (see their Figure 4 below), it is expected that additional model features, such as **convolutional layers** may be necessary in order to detect digits within the [SVHN](http://ufldl.stanford.edu/housenumbers/) dataset, which were not necessary for success on the [MNIST](http://yann.lecun.com/exdb/mnist/) dataset.
+ ![Accuracy vs. Depth](http://i.imgur.com/qItcORO.png)
 
 3. Feed the model new number-containing **images from the wild**.
 
@@ -58,5 +61,6 @@ More specifically, the project design will be structured as follows:
 4. **Localization** will be employed to display a box around detected sequences of digits.
 
    This will be made possible by meta-data within the [SVHN](http://ufldl.stanford.edu/housenumbers/) dataset, and as [Goodfellow et al.](http://static.googleusercontent.com/media/research.google.com/en//pubs/archive/42241.pdf) suggest, will likely require additional hidden layers to perform the localization task.
+   ![Localization](http://i.imgur.com/EX5it8P.png)
    
    
