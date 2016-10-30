@@ -32,4 +32,19 @@ The workflow for this project will closely approximate the steps set forth in th
 More specifically, the project design will be structured as follows:  
 
 1. Design and test a model architecture that can identify sequences of digits in an image.
+ 1. This will largely follow the work of [Goodfellow et al.](http://static.googleusercontent.com/media/research.google.com/en//pubs/archive/42241.pdf), as they have already developed an effective an efficient model for this task.
+ 2. This project will use a "deep" neural network as implemented by the [TensorFlow](https://www.tensorflow.org) library.
+ 3. Model development will largely focus on the [MNIST](http://yann.lecun.com/exdb/mnist/) and [notMNIST](http://yaroslavvb.blogspot.com/2011/09/notmnist-dataset.html) datasets, as these represent simplified depictions of the task the neural net will eventually be expected to perform.
+ 
+    It is expected that performance will degrade when moving to the [SVHN](http://ufldl.stanford.edu/housenumbers/) dataset, so performance on the [MNIST](http://yann.lecun.com/exdb/mnist/) and [notMNIST](http://yaroslavvb.blogspot.com/2011/09/notmnist-dataset.html) datasets will need to exceed 80%.
+    
+    It is expected that the neural network will employ **softmax regressions** in order to choose between competing interpretations of a given digit image.
+    
+    It is also expected that, while perhaps not necessary for success on the [MNIST](http://yann.lecun.com/exdb/mnist/) and [notMNIST](http://yaroslavvb.blogspot.com/2011/09/notmnist-dataset.html) datasets, **convolutional layers** may be necessary in order to detect digits within the [SVHN](http://ufldl.stanford.edu/housenumbers/) dataset.
+    
+    For training on the [MNIST](http://yann.lecun.com/exdb/mnist/) dataset, the already-provided training and test data split will be used.
+
+2. Train a model on realistic data.
  1. 
+3. Feed the model new number-containing images from the wild.
+4. Localization will be employed to display a box around detected sequences of digits.
