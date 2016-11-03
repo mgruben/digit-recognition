@@ -39,7 +39,7 @@ A subset of the [SVHN](http://ufldl.stanford.edu/housenumbers/) dataset will be 
 
 The [SVHN](http://ufldl.stanford.edu/housenumbers/) dataset is chosen because of its closer resemblance to real-world digit data than digits from the [MNIST](http://yann.lecun.com/exdb/mnist/index.html) dataset.
 
-Once a neural net model has been determined, a larger subset of the [SVHN](http://ufldl.stanford.edu/housenumbers/) dataset will be used to train the model.
+Once a neural net model has been determined, a larger subset of the [SVHN](http://ufldl.stanford.edu/housenumbers/) dataset will be used to train the model.  
 <img src="http://ufldl.stanford.edu/housenumbers/examples_new.png" alt="SVHN" width="500">
 
 Once this is done, the model will be fed images from the wild to see how it performs.  
