@@ -35,12 +35,12 @@ This is a fascinating place to be, as it suggests that further contributions to 
 This project seeks to identify and output numbers which are contained in images.
 
 ## Dataset and Inputs
-The [MNIST](http://yann.lecun.com/exdb/mnist/) dataset will be used to develop the neural network model.  
-<img src="https://www.tensorflow.org/versions/r0.11/images/MNIST.png" alt="MNIST example" width="200">
+A subset of the [SVHN](http://ufldl.stanford.edu/housenumbers/) dataset will be used to develop the neural network model.  
 
-Once a neural net model has been determined, the [SVHN](http://ufldl.stanford.edu/housenumbers/) dataset will be used to train the model.
+The [SVHN](http://ufldl.stanford.edu/housenumbers/) dataset is chosen because of its closer resemblance to real-world digit data than digits from the [MNIST](http://yann.lecun.com/exdb/mnist/index.html) dataset.
+
+Once a neural net model has been determined, a larger subset of the [SVHN](http://ufldl.stanford.edu/housenumbers/) dataset will be used to train the model.
 <img src="http://ufldl.stanford.edu/housenumbers/examples_new.png" alt="SVHN" width="500">
-
 
 Once this is done, the model will be fed images from the wild to see how it performs.
 
@@ -62,19 +62,17 @@ The workflow for this project will closely approximate the steps set forth in th
 More specifically, the project design will be structured as follows:  
 
 1. **Design and test** a model architecture that can identify sequences of digits in an image.
- 1. This will largely follow the work of [Goodfellow et al.](http://static.googleusercontent.com/media/research.google.com/en//pubs/archive/42241.pdf), as they have already developed an effective an efficient model for this task.
+ 1. This will largely follow the work of [Goodfellow et al.](http://static.googleusercontent.com/media/research.google.com/en//pubs/archive/42241.pdf), as they have already developed an effective and efficient model for this task.
  2. This project will use a deep neural network as implemented by the [TensorFlow](https://www.tensorflow.org) library.  "Deep" here refers to the fact that there are several hidden layers in the neural network.
- 3. Model development will largely focus on the [MNIST](http://yann.lecun.com/exdb/mnist/) dataset, as it contains simplified depictions of the digits the neural net will eventually be expected to recognize.
+ 3. Model development will largely focus on the [SVHN](http://ufldl.stanford.edu/housenumbers/) dataset, likely by training with a [convolutional neural network](http://deeplearning.net/tutorial/lenet.html) in order to reduce the need for explicit image pre-processing.
  
-    It is expected that performance will degrade when moving to the [SVHN](http://ufldl.stanford.edu/housenumbers/) dataset, so performance on the [MNIST](http://yann.lecun.com/exdb/mnist/) dataset will need to exceed 80%.
-    
     It is expected that the neural network will employ **softmax regressions** in order to choose between competing interpretations of a given digit image.
     
-    For training on the [MNIST](http://yann.lecun.com/exdb/mnist/) dataset, the already-provided training and test data split will be used.
+    For training on the [SVHN](http://ufldl.stanford.edu/housenumbers/) dataset, a subset of the already-provided training data will be used.
 
 2. **Train** a model on realistic data.
- 1. This phase will focus on the [SVHN](http://ufldl.stanford.edu/housenumbers/) dataset, and will attempt to replicate the performance achieved on the [MNIST](http://yann.lecun.com/exdb/mnist/) dataset, while recognizing that the digits in [SVHN](http://ufldl.stanford.edu/housenumbers/) are more difficult to recognize.
- 2. As suggested by [Goodfellow et al.](http://static.googleusercontent.com/media/research.google.com/en//pubs/archive/42241.pdf) (see their Figure 4 below), it is expected that additional model features, such as **convolutional layers** may be necessary in order to detect digits within the [SVHN](http://ufldl.stanford.edu/housenumbers/) dataset, which were not necessary for success on the [MNIST](http://yann.lecun.com/exdb/mnist/) dataset.
+ 1. This phase will attempt to replicate the performance achieved on that dataset by [Goodfellow et al.](http://static.googleusercontent.com/media/research.google.com/en//pubs/archive/42241.pdf) on the [SVHN](http://ufldl.stanford.edu/housenumbers/) dataset, while acknowledging that their model will likely outperform mine.
+ 2. As suggested by [Goodfellow et al.](http://static.googleusercontent.com/media/research.google.com/en//pubs/archive/42241.pdf) (see their Figure 4 below), it is expected that additional model features, such as **specialized units** may be necessary in order to detect digits within the [SVHN](http://ufldl.stanford.edu/housenumbers/) dataset with sufficent accuracy.
  ![Accuracy vs. Depth](http://i.imgur.com/qItcORO.png)
 
 3. Feed the model new number-containing **images from the wild**.
