@@ -42,7 +42,13 @@ The [SVHN](http://ufldl.stanford.edu/housenumbers/) dataset is chosen because of
 Once a neural net model has been determined, a larger subset of the [SVHN](http://ufldl.stanford.edu/housenumbers/) dataset will be used to train the model.
 <img src="http://ufldl.stanford.edu/housenumbers/examples_new.png" alt="SVHN" width="500">
 
-Once this is done, the model will be fed images from the wild to see how it performs.
+Once this is done, the model will be fed images from the wild to see how it performs.  
+
+Hopefully, images from the wild will not require explicit digit-boxing during preprocessing, although they will probably need to be cropped to exclude the parts of the image which do not contain digits.  
+
+A potential source of images from the wild is Google Street View itself.  Unfortunately, there is no way of knowing whether a particular Street View capture was already included in the training set, which would misleadingly enable a correct reading of the test image.
+
+A better source of images from the wild is to photograph digits (e.g. street address, apartment numbers, segments of phone numbers).  As this would be a manual exercise, the size of this dataset would necessarily be limited.
 
 ## Solution Statement
 This will be accomplished through the creation and training of a deep neural net to recognize numeric content within an image.
