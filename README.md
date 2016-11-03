@@ -3,7 +3,7 @@ Identifies and outputs digits contained within images.
 
 ![SVHN](http://ufldl.stanford.edu/housenumbers/examples_new.png)
 
-This project uses data from the [MNIST](http://yann.lecun.com/exdb/mnist/) and [SVHN](http://ufldl.stanford.edu/housenumbers/) datasets.
+This project uses data from the [SVHN](http://ufldl.stanford.edu/housenumbers/) datasets.
 
 This project was completed for the [Udacity Machine Learning Nanodegree](https://www.udacity.com/course/machine-learning-engineer-nanodegree-by-google--nd009).
 
