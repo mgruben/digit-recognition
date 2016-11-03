@@ -1,9 +1,35 @@
 # Deep Learning Capstone Project
 ## Background
+### Recognizing Text
+While computers can easily digest and process text input like the sentence you're reading right now, the task of understanding text that is depicted by an image has [historically](https://en.wikipedia.org/wiki/Timeline_of_optical_character_recognition) been much more difficult.  
+![digit recognition](http://techglam.com/wp-content/uploads/2013/10/reCAPTCHA.jpg)
+
+Early attempts relied on [heavily](https://en.wikipedia.org/wiki/OCR-A)-[standardized](https://en.wikipedia.org/wiki/OCR-B) fonts, responsible in large part for the iconic blocky numbers at the bottom of checks (7 below).  
+<img src="https://upload.wikimedia.org/wikipedia/commons/8/8e/BritishChequeAnnotated.png" alt="An example check" width="400">
+
+Digit recognition can be thought of as a **subset of text recognition** (a 10-character subset, to be exact).
+
+### A Benchmark for Comparison
+Recent attempts at digit recognition generally orbit known datasets of digits such as the Modified National Institute of Standards and Technology, or [MNIST](http://yann.lecun.com/exdb/mnist/index.html) for short.  This allows for much easier comparison of methodology and results than if every attempt were made on a custom, bespoke dataset.
+
+The MNIST dataset is known as a relatively "clean" dataset; there's not much noise or skew, and each element in the dataset represents a single digit.  
+But such a well-ordered dataset isn't typically what we ask **digit recognizers** to analyze; instead, if we're lucky we have good-quality scans of documents containing lots of non-digit information along with digits.  
+If we're really unlucky (or _adventurous_) we might even ask our **digit recognizer** to find the digits in a photograph of a physical location.  This would introduce subsidiary problems of lighting, perspective, and contrast which often aren't present in scanned documents.  
+
+A dataset which popularly represents this type of "in the wild" digits is Stanford's Street View House Numbers, or [SVHN](http://ufldl.stanford.edu/housenumbers/), dataset.  Obtained from Google's [Street View](https://www.google.com/streetview/), digits in this dataset are more difficult to correctly recognize than are digits from the MNIST dataset.
+
+### Fueled by Competition
+People have taken many different approaches to the MNIST and SVHN datasets, from [adaptive thresholding](https://www.researchgate.net/profile/Chirag_Patel27/publication/235956427_Optical_Character_Recognition_by_Open_source_OCR_Tool_Tesseract_A_Case_Study/links/00463516fa43a64739000000.pdf) to [linear classifiers](http://yann.lecun.com/exdb/publis/index.html#lecun-98) to [k-nearest neighbors](http://ieeexplore.ieee.org/document/4250467/) to [boosted stumps](http://hal.in2p3.fr/in2p3-00614564/document).
+
+Currently, the digit-recognition algorithm with the highest accuracy involves **[neural networks](http://ufldl.stanford.edu/housenumbers/nips2011_housenumbers.pdf)**.
+
+### Neural Networks
 [Neural networks](https://en.wikipedia.org/wiki/Artificial_neural_network) are effective [function approximators](http://neuralnetworksanddeeplearning.com/chap4.html), but it turns out that the deeper the neural net is, the [more complicated](https://en.wikipedia.org/wiki/Deep_learning#Applications) are the tasks it can perform.
 
-Among these complicated tasks is digit recognition.  
-![digit recognition](http://techglam.com/wp-content/uploads/2013/10/reCAPTCHA.jpg)
+Interestingly, it's [not immediately obvious](https://www.youtube.com/watch?v=BFdMrDOx_CM) why neural nets should perform so well on **digit recognition**, and yet they do, both [on MNIST](https://www.kaggle.com/c/digit-recognizer/leaderboard) and [on SVHN](http://static.googleusercontent.com/media/research.google.com/en//pubs/archive/42241.pdf).
+
+This suggests that the practice of digit recognition has, for the moment at least, surpassed the theory for why they should work so well.  
+This is a fascinating place to be, as it suggests that further contributions to **digit recognition** are unlikely without a [better understanding](http://yosinski.com/deepvis) of how neural nets function.
 
 ## Problem Statement
 This project seeks to identify and output numbers which are contained in images.
