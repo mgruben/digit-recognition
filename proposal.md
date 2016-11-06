@@ -35,14 +35,18 @@ This is a fascinating place to be, as it suggests that further contributions to 
 This project seeks to identify and output numbers which are contained in images.
 
 ## Dataset and Inputs
-A subset of the [SVHN](http://ufldl.stanford.edu/housenumbers/) dataset will be used to develop the neural network model.  
+### About the Dataset
+The [SVHN](http://ufldl.stanford.edu/housenumbers/) dataset will be used to develop the neural network model because of its closer resemblance to real-world digit data than digits from the [MNIST](http://yann.lecun.com/exdb/mnist/index.html) dataset.
 
-The [SVHN](http://ufldl.stanford.edu/housenumbers/) dataset is chosen because of its closer resemblance to real-world digit data than digits from the [MNIST](http://yann.lecun.com/exdb/mnist/index.html) dataset.
+The entire [SVHN](http://ufldl.stanford.edu/housenumbers/) dataset contains 4GB of data, or approximately 600,000 digit images.  These digit-images are provided either as standalone 32x32 single-character images, or as larger images containing sequences of individual digits in varying alignments and with varying spacing.  
+This project will use the larger images exclusively, as this represents a more realistic challenge than does using the standalone single-character images.
 
-The entire [SVHN](http://ufldl.stanford.edu/housenumbers/) dataset contains 4GB of data, or approximately 600,000 digit images.  
+Also provided in `Matlab` format are "bounding boxes" which denote the location and label of individual digits within the image, for use in training the model.
+
+### Model Development
 Training the convolutional network [EBLearn](http://eblearn.sourceforge.net/svhn_tutorial.html) on 10,000 training samples and 6,000 validation samples from the [SVHN](http://ufldl.stanford.edu/housenumbers/) dataset generally takes ~10 minutes.  
 Runtimes for the model being developed for this project are expected to be roughly the same order of magnitude.  
-Subsetting the dataset is therefore a pragmatic concession to speed model development.
+Therefore, subsetting the dataset is a pragmatic concession to speed model development.
 
 Once a neural net model has been determined, a larger subset of the [SVHN](http://ufldl.stanford.edu/housenumbers/) dataset will be used to train the model.  
 <img src="http://ufldl.stanford.edu/housenumbers/examples_new.png" alt="SVHN" width="500">
