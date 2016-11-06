@@ -19,9 +19,9 @@ If we're really unlucky (or _adventurous_) we might even ask our **digit recogni
 A dataset which popularly represents this type of "in the wild" digits is Stanford's Street View House Numbers, or [SVHN](http://ufldl.stanford.edu/housenumbers/), dataset.  Obtained from Google's [Street View](https://www.google.com/streetview/), digits in this dataset are more difficult to correctly recognize than are digits from the MNIST dataset.
 
 ### Fueled by Competition
-People have taken many different approaches to the MNIST and SVHN datasets, from adaptive thresholding [(Patel et al. 2012)](https://www.researchgate.net/profile/Chirag_Patel27/publication/235956427_Optical_Character_Recognition_by_Open_source_OCR_Tool_Tesseract_A_Case_Study/links/00463516fa43a64739000000.pdf) to linear classifiers [(LeCun et al. 1998)](http://yann.lecun.com/exdb/publis/index.html#lecun-98) to k-nearest neighbors [(Keysers et al. 2007)](http://ieeexplore.ieee.org/document/4250467/) to boosted stumps [(Busa-Fekete and Kegl 2010)](http://hal.in2p3.fr/in2p3-00614564/document).
+People have taken many different approaches to the MNIST and SVHN datasets, from [adaptive thresholding](https://www.researchgate.net/profile/Chirag_Patel27/publication/235956427_Optical_Character_Recognition_by_Open_source_OCR_Tool_Tesseract_A_Case_Study/links/00463516fa43a64739000000.pdf) to [linear classifiers](http://yann.lecun.com/exdb/publis/index.html#lecun-98) to [k-nearest neighbors](http://ieeexplore.ieee.org/document/4250467/) to [boosted stumps](http://hal.in2p3.fr/in2p3-00614564/document).
 
-Currently, the digit-recognition algorithm with the highest accuracy involves **neural networks** [(Netzer et al. 2011)](http://ufldl.stanford.edu/housenumbers/nips2011_housenumbers.pdf).
+Currently, the digit-recognition algorithm with the highest accuracy involves **[neural networks](http://ufldl.stanford.edu/housenumbers/nips2011_housenumbers.pdf)**.
 
 ### Neural Networks
 [Neural networks](https://en.wikipedia.org/wiki/Artificial_neural_network) are effective [function approximators](http://neuralnetworksanddeeplearning.com/chap4.html), but it turns out that the deeper the neural net is, the [more complicated](https://en.wikipedia.org/wiki/Deep_learning#Applications) are the tasks it can perform.
