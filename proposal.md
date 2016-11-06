@@ -39,6 +39,11 @@ A subset of the [SVHN](http://ufldl.stanford.edu/housenumbers/) dataset will be 
 
 The [SVHN](http://ufldl.stanford.edu/housenumbers/) dataset is chosen because of its closer resemblance to real-world digit data than digits from the [MNIST](http://yann.lecun.com/exdb/mnist/index.html) dataset.
 
+The entire [SVHN](http://ufldl.stanford.edu/housenumbers/) dataset contains 4GB of data, or approximately 600,000 digit images.  
+Training the convolutional network [EBLearn](http://eblearn.sourceforge.net/svhn_tutorial.html) on 10,000 training samples and 6,000 validation samples from the [SVHN](http://ufldl.stanford.edu/housenumbers/) dataset generally takes ~10 minutes.  
+Runtimes for the model being developed for this project are expected to be roughly the same order of magnitude.  
+Subsetting the dataset is therefore a pragmatic concession to speed model development.
+
 Once a neural net model has been determined, a larger subset of the [SVHN](http://ufldl.stanford.edu/housenumbers/) dataset will be used to train the model.  
 <img src="http://ufldl.stanford.edu/housenumbers/examples_new.png" alt="SVHN" width="500">
 
