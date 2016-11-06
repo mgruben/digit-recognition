@@ -68,7 +68,8 @@ Python 2.7 and publicly-available libraries will be used to accomplish this task
 These are expected to include `numpy`, `jupyter`, `TensorFlow`, and `opencv`.
 
 ## Benchmark Model
-[Goodfellow et al.](http://static.googleusercontent.com/media/research.google.com/en//pubs/archive/42241.pdf) achieved 91% whole-sequence recognition accuracy on the [SVHN](http://ufldl.stanford.edu/housenumbers/) dataset.  This project attempts to approximate, but not achieve, that performance.
+[Goodfellow et al.](http://static.googleusercontent.com/media/research.google.com/en//pubs/archive/42241.pdf) achieved 91% whole-sequence recognition accuracy on the private [SVHN](http://ufldl.stanford.edu/housenumbers/) dataset, and 96% whole-sequence recognition accuracy on the public [SVHN](http://ufldl.stanford.edu/housenumbers/) dataset.  
+This project attempts to recreate their performance on the publicly-available [SVHN](http://ufldl.stanford.edu/housenumbers/) dataset.
 
 ## Evaluation Metrics
 Performance will be evaluated on a whole-sequence recognition basis, with a target accuracy of 80% or better.
