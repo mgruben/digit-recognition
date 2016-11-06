@@ -55,7 +55,7 @@ Once a neural net model has been determined, a larger subset of the [SVHN](http:
 Once the model has been developed and trained, the model will be fed images from the wild to see how it performs.  
 
 Hopefully, images from the wild will not require explicit digit-boxing during preprocessing, although they will probably need to be cropped to exclude the parts of the image which do not contain digits.  
-If digit-boxing is required, a potential solution would be to [employ](http://stackoverflow.com/a/9620295/6052663) [contour finding](http://docs.opencv.org/3.1.0/dd/d49/tutorial_py_contour_features.html) from the OpenCV python library.
+If digit-boxing is required, a potential solution would be to [employ](http://stackoverflow.com/a/9620295/6052663) [contour finding](http://docs.opencv.org/3.1.0/dd/d49/tutorial_py_contour_features.html) from the OpenCV Python library.
 
 A potential source of images from the wild is Google Street View itself.  Unfortunately, there is no way of knowing whether a particular Street View capture was already included in the training set, which would misleadingly enable a correct reading of the test image.
 
