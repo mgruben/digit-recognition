@@ -49,11 +49,13 @@ Runtimes for the model being developed for this project are expected to be rough
 Therefore, subsetting the dataset is a pragmatic concession to speed model development.
 
 Once a neural net model has been determined, a larger subset of the [SVHN](http://ufldl.stanford.edu/housenumbers/) dataset will be used to train the model.  
-<img src="http://ufldl.stanford.edu/housenumbers/examples_new.png" alt="SVHN" width="500">
+<img src="http://ufldl.stanford.edu/housenumbers/examples_new.png" alt="SVHN" width="500">  
 
-Once this is done, the model will be fed images from the wild to see how it performs.  
+### Testing on New Data
+Once the model has been developed and trained, the model will be fed images from the wild to see how it performs.  
 
 Hopefully, images from the wild will not require explicit digit-boxing during preprocessing, although they will probably need to be cropped to exclude the parts of the image which do not contain digits.  
+If digit-boxing is required, a potential solution would be to [employ](http://stackoverflow.com/a/9620295/6052663) [contour finding](http://docs.opencv.org/3.1.0/dd/d49/tutorial_py_contour_features.html) from the OpenCV python library.
 
 A potential source of images from the wild is Google Street View itself.  Unfortunately, there is no way of knowing whether a particular Street View capture was already included in the training set, which would misleadingly enable a correct reading of the test image.
 
