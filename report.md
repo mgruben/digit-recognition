@@ -29,7 +29,25 @@ Also provided in `Matlab` format are "bounding boxes" which denote the location 
 
 
 ### Problem Statement
-This project seeks to identify and output digits which are contained in the larger, uncropped images from the [SVHN](http://ufldl.stanford.edu/housenumbers/) dataset.
+#### Background
+Numerous Machine Learning teams have [created models](http://rodrigob.github.io/are_we_there_yet/build/classification_datasets_results.html#5356484e) to recognize the digits contained in the [SVHN](http://ufldl.stanford.edu/housenumbers/) dataset.
+
+There are two main ways to quantify their performance:  
+
+1. **Whole-sequence Accuracy**  
+   Of the [SVHN](http://ufldl.stanford.edu/housenumbers/) images, how many were correctly recognized without any flaws?
+
+   This quantification does not award "partial credit," since 2134 Sycamore Lane is not the same as 1234 Sycamore Lane.
+
+2. **Per-digit Accuracy**  
+   Of the digits within the [SVHN](http://ufldl.stanford.edu/housenumbers/) images, how many were correctly recognized?  
+   
+   This quantification does award "partial credit," since we admit that 2134 Sycamore Lane is closer to correctly representing 1234 Sycamore Lane than is 851 Sycamore Lane.
+
+One model in particular, developed by [Goodfellow et al.](https://arxiv.org/pdf/1312.6082v4.pdf) in 2014, achieved 96% whole-sequence accuracy, and just under 98% per-digit accuracy.
+
+#### Statement
+> This project seeks to identify and output digits which are contained in the larger, uncropped images from the [SVHN](http://ufldl.stanford.edu/housenumbers/) dataset with at least 96% whole-sequence accuracy.
 
 #### Approach
 In short, this project will create and train a [TensorFlow](https://www.tensorflow.org) deep neural net to recognize and output digits from [SVHN](http://ufldl.stanford.edu/housenumbers/) images.
