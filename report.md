@@ -4,6 +4,7 @@
 
 
 ### Problem Statement
+This project seeks to identify and output numbers which are contained in images.
 
 
 ### Metrics
