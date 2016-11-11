@@ -83,10 +83,15 @@ In detail, the approach this project will take is as follows:
 
 
 ### Metrics
+As mentioned above, two of the most common ways to measure performance on the [SVHN](http://ufldl.stanford.edu/housenumbers/) dataset are **whole-sequence accuracy** and **per-digit accuracy**.
 
+This project will measure its performance through **whole-sequence accuracy**.
+
+**Per-digit accuracy** will also be reported to allow for more-robust comparison between existing models, but this metric will not be the focus of this project.
 
 ## Analysis
 ### Data Exploration
+
 ### Exploratory Visualization
 ### Algorithms and Techniques
 ### Benchmark
