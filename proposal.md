@@ -104,6 +104,6 @@ More specifically, the project design will be structured as follows:
 4. **Localization** will be employed to display a box around detected sequences of digits.
 
    This will be made possible by meta-data within the [SVHN](http://ufldl.stanford.edu/housenumbers/) dataset, and as [Goodfellow et al.](http://static.googleusercontent.com/media/research.google.com/en//pubs/archive/42241.pdf) suggest, will likely require additional hidden layers to perform the localization task.  
-   <img src="http://i.imgur.com/EX5it8P.png" alt="Localization" width="400">
+   <img src="images/localization.png" alt="Localization" width="400">
    
    
