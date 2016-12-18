@@ -32,16 +32,28 @@ We trained with dropout applied to all hidden layers but not the input.
 * Softmax outputs probabilities?
 
 (0) input (54 x 54 x 3 image)
-(1) same-pad 5 × 5 conv  [48] -> 2 × 2 max pooling -> 3 × 3 subtractive normalization -> dropout -> 3-filter maxout (?)
-(2) same-pad 5 × 5 conv  [64] -> 2 × 2 max pooling (stride 2) -> 3 × 3 subtractive normalization -> ReLU -> dropout
-(3) same-pad 5 × 5 conv [128] -> 2 × 2 max pooling (stride 1) -> 3 × 3 subtractive normalization -> ReLU -> dropout
-(4) same-pad 5 × 5 conv [160] -> 2 × 2 max pooling (stride 2) -> 3 × 3 subtractive normalization -> ReLU -> dropout
-(5) same-pad 5 × 5 conv [192] -> 2 × 2 max pooling (stride 1) -> 3 × 3 subtractive normalization -> ReLU -> dropout
-(6) same-pad 5 × 5 conv [192] -> 2 × 2 max pooling (stride 2) -> 3 × 3 subtractive normalization -> ReLU -> dropout
-(7) same-pad 5 × 5 conv [192] -> 2 × 2 max pooling (stride 1) -> 3 × 3 subtractive normalization -> ReLU -> dropout
-(8) same-pad 5 × 5 conv [192] -> 2 × 2 max pooling (stride 2) -> 3 × 3 subtractive normalization -> ReLU -> dropout
+(1) same-pad 5 × 5 conv  [48] -> 2 × 2 max pooling (stride 2) -> 3 × 3 subtractive normalization -> dropout -> 3-filter maxout (?)
+(2) same-pad 5 × 5 conv  [64] -> 2 × 2 max pooling (stride 1) -> 3 × 3 subtractive normalization -> dropout -> ReLU
+(3) same-pad 5 × 5 conv [128] -> 2 × 2 max pooling (stride 2) -> 3 × 3 subtractive normalization -> dropout -> ReLU
+(4) same-pad 5 × 5 conv [160] -> 2 × 2 max pooling (stride 1) -> 3 × 3 subtractive normalization -> dropout -> ReLU
+(5) same-pad 5 × 5 conv [192] -> 2 × 2 max pooling (stride 2) -> 3 × 3 subtractive normalization -> dropout -> ReLU
+(6) same-pad 5 × 5 conv [192] -> 2 × 2 max pooling (stride 1) -> 3 × 3 subtractive normalization -> dropout -> ReLU
+(7) same-pad 5 × 5 conv [192] -> 2 × 2 max pooling (stride 2) -> 3 × 3 subtractive normalization -> dropout -> ReLU
+(8) same-pad 5 × 5 conv [192] -> 2 × 2 max pooling (stride 1) -> 3 × 3 subtractive normalization -> dropout -> ReLU
 (9) locally-connected [192] -> dropout
 (10) fully-connected [3072] -> dropout
 (11) fully-connected [3072] -> dropout
 
 (12) output (only some nodes are activated / backpropagate?  See Goodfellow et al.'s Arraw diagram in Appendix A)
+
+
+???
+While I'm certain that the description that Goodfellow et al. provide of their architecture is consistent with the architecture they used, it seems to me that their description is ambiguous (i.e. several different proposed architectures would be consistent with it).  
+I'd like to hammer down precisely which architecture they used, if possible, but if not, then at least I'd like to clarify some of my misconceptions until I have an architecture that comports with their description.  
+1. What's the activation for the Fully-Connected layers, if not ReLU?  Is it linear?  Is there any activation at all?
+2. What is meant by "subtractive normalization"?  
+   The only process I think this could be referring to is from the preprocessing section of the paper, where they discuss subtracting the mean of the image from the image before it is passed to the model as input.  Although that process would "preserve representation size", it doesn't occur with 3 x 3 windows, so I'm certain I'm missing something they're trying to convey.
+3.  Regarding "maxout units", I'm pretty sure that [this Keras layer](https://keras.io/layers/core/#maxoutdense) is meant to provide the "maxout unit" functionality, but I'm missing how the different terminologies map to each other;
+   1. Where Goodfellow et al. discuss "three filters per unit", am I to understand that to mean, in the Keras notation, "nb_feature: number of Dense layers to use internally"?
+   2. Since (I think that) Goodfellow et al. discuss using convolutions, subtractive normalization, and max pooling as part of this MaxoutDense layer, would I properly approximate that by layer (1) above, followed by a MaxoutDense layer?
+4.  Regarding layer 9, I'm happy to change this to a simple Flatten() layer (that seems like what *should* go between convolutions and fully-connected layers), but then that leaves me wondering what Goodfellow et al. mean by "eight convolutional hidden layers, **one locally connected hidden layer**, and two densely connected hidden layers" (emphasis added).  It seems to me like a Flatten() layer would be fully-connected.
