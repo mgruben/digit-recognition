@@ -43,4 +43,5 @@ We trained with dropout applied to all hidden layers but not the input.
 (9) locally-connected [192] -> ReLU -> dropout
 (10) fully-connected [3072] -> ReLU -> dropout
 (11) fully-connected [3072] -> ReLU -> dropout
-(12) output
+
+(12) output (only some nodes are activated / backpropagate?  See Goodfellow et al.'s Arraw diagram in Appendix A)
