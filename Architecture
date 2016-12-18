@@ -6,13 +6,11 @@ The first hidden layer contains maxout units (Goodfellow et al., 2013) (with thr
 
 The number of units at each spatial location in each layer is [48, 64, 128, 160] for the first four layers and 192 for all other locally connected layers. The fully connected layers contain 3,072 units each.
 
-Each convolutional layer includes max pooling and subtractive normalization.  All convolution kernels were of size 5 × 5. The max pooling window size is 2 × 2. The stride alternates between 2 and 1 at each layer, so that half of the layers don’t reduce the spatial size of the representation.
+Each convolutional layer includes max pooling and subtractive normalization. The max pooling window size is 2 × 2. The stride alternates between 2 and 1 at each layer, so that half of the layers don’t reduce the spatial size of the representation.
 
-All convolutions use zero padding on the input to preserve representation size.
+All convolutions use zero padding on the input to preserve representation size. The subtractive normalization operates on 3x3 windows and preserves representation size.
 
-The subtractive normalization operates on 3x3 windows and preserves representation size.
-
-We trained with dropout applied to all hidden layers but not the input.
+All convolution kernels were of size 5 × 5. We trained with dropout applied to all hidden layers but not the input.
 
 * Note that "zero-pad" is referred to as "same" padding by TensorFlow
 * Note further that Keras' `MaxoutDense` Layer may be the maxout layer referred to below
@@ -40,7 +38,7 @@ We trained with dropout applied to all hidden layers but not the input.
 (6) same-pad 5 × 5 conv [192] -> 2 × 2 max pooling (stride 1) -> 3 × 3 subtractive normalization -> dropout -> ReLU
 (7) same-pad 5 × 5 conv [192] -> 2 × 2 max pooling (stride 2) -> 3 × 3 subtractive normalization -> dropout -> ReLU
 (8) same-pad 5 × 5 conv [192] -> 2 × 2 max pooling (stride 1) -> 3 × 3 subtractive normalization -> dropout -> ReLU
-(9) locally-connected [192] -> dropout
+(9) flatten
 (10) fully-connected [3072] -> dropout
 (11) fully-connected [3072] -> dropout
 
