@@ -31,7 +31,7 @@ We trained with dropout applied to all hidden layers but not the input.
 * Use "a generic method, like stochastic gradient descent"
 * Softmax outputs probabilities?
 
-(0) input
+(0) input (54 x 54 x 3 image)
 (1) same-pad 5 × 5 conv  [48] -> 3-filter maxout (?) -> 2 × 2 max pooling -> 3 × 3 subtractive normalization -> dropout
 (2) same-pad 5 × 5 conv  [64] -> 2 × 2 max pooling (stride 2) -> 3 × 3 subtractive normalization -> ReLU -> dropout
 (3) same-pad 5 × 5 conv [128] -> 2 × 2 max pooling (stride 1) -> 3 × 3 subtractive normalization -> ReLU -> dropout
