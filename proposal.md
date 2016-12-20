@@ -2,7 +2,7 @@
 ## Background
 ### Recognizing Text
 While computers can easily digest and process text input like the sentence you're reading right now, the task of recognizing text that is depicted by an image has [historically](https://en.wikipedia.org/wiki/Timeline_of_optical_character_recognition) been much more difficult.  
-![digit recognition](http://techglam.com/wp-content/uploads/2013/10/reCAPTCHA.jpg)
+![digit recognition](images/captcha.jpg)
 
 Early attempts relied on [heavily](https://en.wikipedia.org/wiki/OCR-A)-[standardized](https://en.wikipedia.org/wiki/OCR-B) fonts, responsible in large part for the iconic blocky numbers at the bottom of checks (7 below).  
 <img src="https://upload.wikimedia.org/wikipedia/commons/8/8e/BritishChequeAnnotated.png" alt="An example check" width="400">
