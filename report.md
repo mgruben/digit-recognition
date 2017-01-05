@@ -90,15 +90,261 @@ This project will measure its performance through **whole-sequence accuracy**.
 **Per-digit accuracy** will also be reported to allow for more-robust comparison between existing models, but this metric will not be the focus of this project.
 
 ## Analysis
-### Data Exploration
+![Sample Collection](images/Sample.png)
+A random sample of images from the SVHN training dataset.
+
+### Data Exploration  
+#### Label Distribution  
+Recall that the labels the SVHN dataset presents us with are numbers in the inclusive range (1, 10), where the labels 1 through 9 represent the digits 1 through 9, and the label 10 represents the digit 0.
+
+So, what we see is fascinating: The digits are not uniformly distributed.  
+![Training Set Label Frequency](images/TrainingSetLabelFrequency.png)  
+We would expect a uniform distribution on rolls of a single die, or on the rank of cards drawn from a deck with replacement.  That is to say, we would expect uniformity if it were equally likely that any enumerated outcome could occur.
+
+What we notice here, however, is that `1` is much more likely to occur in this dataset than is `0`, and that `0` is marginally more likely to occur in this dataset than is `9`, which is the least likely of all.  
+Let's try to give more quantitative heft to this via **norming** our histogram:  
+![Training Set Label Probability](images/TrainingSetLabelProbability.png)  
+Revisiting our narrative from above, if we were to pick a digit at random from our dataset, there's ~20% chance that digit is a `1`, and a ~7.5% chance that digit is a `9`.
+
+This is important to note, since if we see our model is correctly classify classifying 20% of the data, it could be the case that our model is just guessing `1` for every classification.
+
+#### Image Cardinality
+What is the distribution of the number of digits per image in the SVHN dataset?  
+![Training Set Digit-Count Frequency](images/TrainingSetDigit-CountFrequency.png)  
+Note that, in the above histogram, there are no images with `0` digits in them, and there is only one image with `6` digits in it.
+
+It is thus perhaps the case that a Tensor which has been built to identify digits in a given image may be pre-disposed to look for two digits, regardless of whether there are 1 or 6 actually in the image.
 
 ### Exploratory Visualization
-### Algorithms and Techniques
-### Benchmark
+House numbers aren't always straight.  This is (1) because such precision is hard, and (2) because sometimes sloping numbers look better.
 
+Let's explore how the numbers slope in the SVHN dataset.  
+![Training Set Average Digit Angle Frequency, Linear Scale](images/TrainingSetAverageDigitAngleFrequencyLinear.png)  
+Interestingly, as can be seen above, there are 9 images in which the slope of the numbers suggests a bottom-to-top ordering.  This almost certainly wasn't intentional.
+
+Is this an error in the dataset?  If so, it affects only a few of the images.
+
+Note also that there aren't any images in which the house numbers are angled beyond -90 degrees.  This suggests that no one placed numbers close enough to bottom-to-top orientation for the error inherent in placing numbers to cause that particular placement to exceed -90 degrees.  Neat!
+
+Let's view the same plot, but with a logarithmically-scaled y-axis, to better see the above-identified outliers.  
+![Training Set Average Digit Angle Frequency, Logarithmic Scale](images/TrainingSetAverageDigitAngleFrequencyLogarithmic.png)  
+As we can see in the above histograms, house numbers are predominately flattish, but some slope upwards (have a positive `Angle`), and some slope downwards (have a negative `Angle`).
+
+As expected, the tail on the negative side is fatter than on the positive side, meaning that more house numbers slope downwards than slope upwards.
+
+This makes sense, as bottom-to-top ordering is not the reading convention anywhere.
+![Writing Directions of the World](images/Writing_directions_of_the_world.svg)
+(image [source](https://en.wikipedia.org/wiki/Writing_system#/media/File:Writing_directions_of_the_world.svg))  
+
+#### Relevance to Analysis
+This suggests that the house numbers are, by overwhelming majority, ordered left-to-right.  Thus, after having identified digits in the SVHN images, digits can be ordered in the output based off of their `x-coordinate`, or `training_metadata['left']` value as referred to above.
+
+### Algorithms and Techniques
+In short, this project will need to:  
+1. Take images and their metadata as input,  
+2. Preprocess the images according to that metadata,  
+3. Define a neural net for learning from the preprocessed images.  
+4. Train the neural net on the preprocessed images.  
+
+This approach has its origins in Yann LeCun's [LeNet](https://www.youtube.com/watch?v=FwFduRA_L6Q) ([LeCun et al., 1995, Learning Algorithms for Classification: A Comparison on Handwritten Digit Recognition](http://s3.amazonaws.com/academia.edu.documents/30766359/10.1.1.41.6835.pdf?AWSAccessKeyId=AKIAJ56TQJRTWSMTNPEA&Expires=1483595347&Signature=x8un0ZGLkpik1ypX4HpGfPoX%2FSA%3D&response-content-disposition=inline%3B%20filename%3DLearning_algorithms_for_classification_A.pdf)), but has more recently been implemented to [recognize house numbers](https://www.youtube.com/watch?v=vGPI_JvLoN0) in Google Street View images (See [Goodfellow et al., 2013, Multi-digit Number Recognition from Street View Imagery using Deep Convolutional Neural Networks](https://arxiv.org/pdf/1312.6082v4.pdf), the impetus for this project).
+
+It is the goal of this project to do as little preprocessing to the images as possible.  
+This is partly a desire to create an autonomous digit recognition platform, balanced against the desire to somehow reduce the size of the input (and thus lower the computational cost), balanced also against the `Keras` requirement that inputs to neural nets all have the same dimension.
+
+The neural net implementation is, broadly speaking, a deep convolutional neural net, so-called because it will have several layers between the input and the output layers ("hidden" layers), some of which perform [convolutions](http://cs231n.github.io/convolutional-networks/) on the inputs.
+
+For more details about the algorithms and techniques employed during [preprocessing](#image-preprocessing) and [model implementation](#convolutional-neural-net), please see those sections respectively.
+
+### Benchmark  
+The benchmark for this project is that achieved by Goodfellow et al. on the public SVHN dataset:  
+96% whole-sequence accuracy.
 ## Methodology
 ### Data Preprocessing
+The images in the SVHN dataset are many different sizes:
+```
+$ file *.png
+...
+28668.png:             PNG image data, 153 x 73, 8-bit/color RGB, non-interlaced
+28669.png:             PNG image data, 67 x 34, 8-bit/color RGB, non-interlaced
+2866.png:              PNG image data, 44 x 21, 8-bit/color RGB, non-interlaced
+28670.png:             PNG image data, 100 x 50, 8-bit/color RGB, non-interlaced
+28671.png:             PNG image data, 83 x 34, 8-bit/color RGB, non-interlaced
+28672.png:             PNG image data, 108 x 49, 8-bit/color RGB, non-interlaced
+...
+```
+Unfortunately, our neural net will need its input to be consistently-sized.  
+That is to say, we need to pick *a* size to which we resize all images, before we feed them to the neural net.
+
+Images which are larger than the destination size are going to *lose* some information, while images which are the destination size or smaller aren't going to gain information.  
+Accordingly, we want to pick a size where information loss isn't significant.
+
+A note here:  
+Just because we downsize the image doesn't mean that there is significant information loss.  
+A 3200x4800 image of the letter `A` is probably still faithfully represented if downsized to 32x48, or smaller.
+
+Let's get an idea of the input dimensions:
+![Distribution of Image Sizes](images/DistributionOfImageSizes.png)  
+Notice that the above plot suggests that the vast majority of the images are less than 50-or-so pixels tall, and many of them are less than 100 pixels wide.
+
+That is, we can probably downsize these images to 64 x 64 and (hopefully) not lose a lot of information.
+![Distribution of Image Sizes Histogram](images/DistributionOfImageSizesHist.png)  
+Let's go with 64x64, the size used by Goodfellow et al.  
+But hold on, we can't just rescale our input images, or we'd get too-squished input like this:  
+![Squished Input](images/squished.png)  
+We need to be more clever about how we downsize.
+#### Clever Image Preprocessing
+[Goodfellow et al.](https://arxiv.org/pdf/1312.6082v4.pdf) describe the following steps to their image preprocessing:  
+
+1. **Find the rectangular bounding box** that will contain individual character bounding boxes.  
+   Note that this means finding `y_min`, `y_max`, `x_min`, and `x_max` such that, for each image, no bounding box is clipped.  
+   Note further that, for each individual character bounding box, `x_min` is simply `training_metadata['left'][i]`, and `y_min` is `training_metadata['top'][i]` (the y-axis is positive in the downward direction).  
+   Then, `y_max` can be found by adding `training_metadata['height'][i]` to `y_min`, and `x_max` can be found by adding `training_metadata['width'][i]` to `x_min`.  
+   Then, we simply take the lowest of the `x_min` and `y_min`, and the largest of the `x_max` and `y_max`.
+
+2. **Expand the rectangular bounding box** by 30% in the `x` and `y` directions.  
+   This seems like they are intending to increase from the rectangle's centroid, so that if we have a `width` of 20, then `x_min` decreases by 3, and `x_max` increases by 3.
+   
+3.  **Crop the image** to this bounding box.  
+   Note that, if the expanded bounding box extends beyond the image dimensions, the box will have to be cropped to fit the image.
+
+4.  **Resize the image** to 64 x 64.  
+   This step can make use of the pipeline we defined earlier, now that we have a better idea, for each image, where the pixels containing the digit information are located.
+   
+5.  **Crop several 54 x 54 images** from random locations within the 64 x 64 image.
+   This step increases the size of the dataset, which is good for training purposes.
+   Note that this step **may** cause us to lose some digit information:  
+   1. For each image, we've defined a **rectangle** which bounds all digit boxes.  Therefore the digits are probably in that rectangle.  
+   2. Then, we upsized the box by 30%, which is a 15% increase on each axis, on each side.  
+   3. Then we resize, which decreases resolution, but doesn't change the relative location of boundaries.  
+   4. *Then*, we crop from to 54 pixels from 64 pixels.  
+   Since we would have to multiply 54 by 18.52% to get back to 64, if the pixels were all cropped from one side (as might happen due to randomness), then we may sometimes crop **inside** of the original digit-containing rectangle, and maybe even cut into some digits.  
+   
+   This is probably not a huge deal, but it's worth noting.
+   
+6. **Subtract the mean** of each image.
+
 ### Implementation
+#### Image Preprocessing
+Let's implement this preprocessing pipeline on the following sample image:
+```python
+i = 31750
+```
+![Pipeline Input](images/PipelineInput.png)  
+##### Find the Rectangular Bounding Box
+```python
+def getBBox(i, train=True):
+    '''
+    Given i, the desired i.png, returns
+    x_min, y_min, x_max, y_max,
+    the four numbers which define the small rectangular bounding
+    box that contains all individual character bounding boxes
+    '''
+    if train:
+        metadata = training_metadata
+    else:
+        metadata = testing_metadata
+    
+    x_min = min(metadata['left'][i-1])
+    y_min = min(metadata['top'][i-1])
+    x_max = max(map(add, metadata['left'][i-1], metadata['width'][i-1]))
+    y_max = max(map(add, metadata['top'][i-1], metadata['height'][i-1]))
+    return x_min, y_min, x_max, y_max
+```
+![Find the Rectangular Bounding Box](images/PipelineFoundBox.png)  
+##### Expand the Rectangular Bounding Box
+```python
+def expandBBox(x_min, y_min, x_max, y_max):
+    '''
+    Given the four boundaries of the bounding box, returns
+    those boundaries expanded out from the centroid by 30%, as
+    x_min, y_min, x_max, y_max
+    '''
+    # The delta will be 30% of the width or height, (integer) halved
+    x_d = ((x_max - x_min) * 0.3) // 2
+    y_d = ((y_max - y_min) * 0.3) // 2
+    return x_min - x_d, y_min - y_d, x_max + x_d, y_max + y_d
+```
+![Expand the Rectangular Bounding Box](images/PipelineExpandedBox.png)  
+##### Crop the Image
+```python
+def cropBBox(img, x_min, y_min, x_max, y_max):
+    '''
+    Given a numpy array representing an image, and
+    the four boundaries of the bounding box, returns
+    the cropped bounding box, as
+    x_min, y_min, x_max, y_max
+    '''
+    x_min = max(0, x_min)
+    y_min = max(0, y_min)
+    x_max = min(img.shape[1], x_max)
+    y_max = min(img.shape[0], y_max)
+    return x_min, y_min, x_max, y_max
+```
+![Crop the Image](images/PipelineCropped.png)
+##### Resize the Image
+```python
+def getResized(f, train=True):
+    '''
+    Given an open file f, representing the desired image file,
+    and a boolean representing whether this is a training image
+    or a testing image,
+    returns a numpy array, which is the portion of the
+    image enclosed by the bounding box around all digits,
+    resized to:
+    64 pixels by 64 pixels if train=True,
+    54 pixels by 54 pixels if train=False
+    '''
+    # Read the file as a numpy array
+    img = mpimg.imread(f)
+    
+    # Get the index i from our filename
+    if train:
+        i = int(f.name[11:].split('.')[0])
+    else:
+        i = int(f.name[10:].split('.')[0])
+
+    # Get our final expanded, cropped digit-bounding box
+    x_min, y_min, x_max, y_max = cropBBox(img, *expandBBox(*getBBox(i, train)))
+    
+    # Return the cropped, resized numpy array
+    if train:
+        return misc.imresize(img[y_min:y_max, x_min:x_max], (64,64))
+    else:
+        return misc.imresize(img[y_min:y_max, x_min:x_max], (54,54))
+```
+![Resize the Image](images/PipelineResized.png)  
+##### Randomly Crop Several Smaller Images
+```python
+def getRandomSmaller(img):
+    '''
+    Given img, a 64 x 64 numpy array representing an image,
+    returns a randomly-sliced 54 x 54 numpy array,
+    representing a crop of the original image
+    '''
+    x_min = rand.randint(0,10)
+    x_max = 64 - (10 - x_min)
+    y_min = rand.randint(0,10)
+    y_max = 64 - (10 - y_min)
+    return img[y_min:y_max, x_min:x_max]
+```
+![Randomly Crop Several Smaller Images](images/PipelineResizedRandom.png)  
+##### Subtract the Mean of the Image
+Recall that the images are stored as numpy arrays.  
+Thus, we can compute the mean of the numpy array, then subtract the mean from each index of the array.  
+Note that, after having done this, we will have negative values in the numpy array.  
+Thus, while the numpy array will still represent an image, it can't be displayed as an image without first handling the negatives in some way.  
+```python
+def subtractMean(img):
+    '''
+    Given img, a numpy array representing an image,
+    subtracts the mean from the numpy array and returns
+    the mean-subtracted result
+    '''
+    return img - np.mean(img)
+```
+![64 x 64 Image with Mean Subtracted](images/PipelineSubtractMean.png)  
+#### Convolutional Neural Net
+
 ### Refinement
 
 ## Results
