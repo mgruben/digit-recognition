@@ -360,20 +360,28 @@ All convolution kernels were of size 5 × 5. We trained with dropout applied to 
 Below is a sketch of the model architecture that best comports with this description:
 ```
 (0) input (54 x 54 x 3 image)
-(1) same-pad 5 × 5 conv  [48] -> 2 × 2 max pooling (stride 2) -> 3 × 3 subtractive normalization -> dropout -> 3-filter maxout
-(2) same-pad 5 × 5 conv  [64] -> 2 × 2 max pooling (stride 1) -> 3 × 3 subtractive normalization -> dropout -> ReLU
-(3) same-pad 5 × 5 conv [128] -> 2 × 2 max pooling (stride 2) -> 3 × 3 subtractive normalization -> dropout -> ReLU
-(4) same-pad 5 × 5 conv [160] -> 2 × 2 max pooling (stride 1) -> 3 × 3 subtractive normalization -> dropout -> ReLU
-(5) same-pad 5 × 5 conv [192] -> 2 × 2 max pooling (stride 2) -> 3 × 3 subtractive normalization -> dropout -> ReLU
-(6) same-pad 5 × 5 conv [192] -> 2 × 2 max pooling (stride 1) -> 3 × 3 subtractive normalization -> dropout -> ReLU
-(7) same-pad 5 × 5 conv [192] -> 2 × 2 max pooling (stride 2) -> 3 × 3 subtractive normalization -> dropout -> ReLU
-(8) same-pad 5 × 5 conv [192] -> 2 × 2 max pooling (stride 1) -> 3 × 3 subtractive normalization -> dropout -> ReLU
+(1) same-pad 5 × 5 conv  [48] -> 2 × 2 max pooling (stride 2) -> 3 × 3 subtractive normalization ->
+    dropout -> 3-filter maxout
+(2) same-pad 5 × 5 conv  [64] -> 2 × 2 max pooling (stride 1) -> 3 × 3 subtractive normalization -> 
+    dropout -> ReLU
+(3) same-pad 5 × 5 conv [128] -> 2 × 2 max pooling (stride 2) -> 3 × 3 subtractive normalization -> 
+    dropout -> ReLU
+(4) same-pad 5 × 5 conv [160] -> 2 × 2 max pooling (stride 1) -> 3 × 3 subtractive normalization -> 
+    dropout -> ReLU
+(5) same-pad 5 × 5 conv [192] -> 2 × 2 max pooling (stride 2) -> 3 × 3 subtractive normalization -> 
+    dropout -> ReLU
+(6) same-pad 5 × 5 conv [192] -> 2 × 2 max pooling (stride 1) -> 3 × 3 subtractive normalization -> 
+    dropout -> ReLU
+(7) same-pad 5 × 5 conv [192] -> 2 × 2 max pooling (stride 2) -> 3 × 3 subtractive normalization -> 
+    dropout -> ReLU
+(8) same-pad 5 × 5 conv [192] -> 2 × 2 max pooling (stride 1) -> 3 × 3 subtractive normalization -> 
+    dropout -> ReLU
 (9) flatten
 (10) fully-connected [3072] -> dropout
 (11) fully-connected [3072] -> dropout
 (12) output
 ```
-Note that the output itself is relatively complex (see image below), and will be dealt with in more detail after the hidden layers.
+Note that the output itself is relatively complex (see image below), and will be dealt with in more detail after the hidden layers.  
 ![Goodfellow et al. Neural Net Architecture](images/architecture.png)  
 Note that the 128 x 128 x 3 referred to above is for the image processing pipeline for the *private* SVHN dataset, to which only Google has access.  
 For the *public* SVHN dataset, that portion of the above graphic should read 54 x 54 x 3, in accordance with the preprocessing pipeline which Goodfellow et al. define in their section 5.1, which this notebook attempts to recreate.  
@@ -633,7 +641,7 @@ I am, however, able to identify factors which could contribute to the discrepanc
 Given the number of identified differences above, it is almost not surprising that my recreation of the Goodfellow et al. model was unable to reproduce their performance.  
 
 #### Ritchie Ng
-However, fewer such differences exist between my recreation of the [Ritchie Ng](https://groups.google.com/forum/#!topic/keras-users/UIhlW423YFs) neural net and my own, and my [implementation](#Trying-a-Random-Model-from-the-Internet) of that model was also unable to reproduce its performance.  
+However, fewer such differences exist between my recreation of the [Ritchie Ng](https://groups.google.com/forum/#!topic/keras-users/UIhlW423YFs) neural net and my own, and my [implementation](#the-ritchie-ng-model) of that model was also unable to reproduce its performance.  
 While that model has a whole-sequence transcription accuracy of 0%, it notably [achieved](https://groups.google.com/d/msg/keras-users/UIhlW423YFs/e2RL2p5hFAAJ) a ~92% first-digit accuracy, and an ~84% second-digit accuracy.
 
 However, while the exact `Keras` calls used to build the model described by Ritchie Ng was provided, his preprocessing scheme, and the representation he chose for his data, including the labels, was *not provided*.  This discrepancy, I would assert, leaves enough room between his experiment and mine so as to greatly hinder comparing the two.
@@ -645,7 +653,7 @@ I would assert that the fundamental approach, that of using a deep neural net to
 The trouble at present is in designing a model architecture that can output whole sequences of digits as they appear in the wild, with all the visual artifacts, distortions, and extra information those wild images contain.  
 As the motivation for undertaking this project, I would assert that Goodfellow et al. have solved this problem computationally, but that their implementation, being private, cannot easily be recreated.
 
-However, to somewhat mirror the [above section](#Goodfellow-et-al.), I think the following improvements would greatly benefit this model:  
+However, to somewhat mirror the [above section](#goodfellow-et-al), I think the following improvements would greatly benefit this model:  
 * Implementing an output layer that turns its classifiers on and off depending on how many digits it detects in the image.  This was, in my implementation, much more easily said than done, but if it could be achieved, it would likely help the model not to learn useless features, or resort to guessing.
 * Identifying an ideal representation of the image labels.  This information is readily available (if somewhat cumbersome to work with), but it's unclear to me which representation (e.g. one-hot, continuous, etc.) would be ideal to feed to the neural net.
 * Identifying an ideal representation of the input images.  That is, what should a given image look like after pre-processing?  Not just "what type of preprocessing should be performed," but also "what structure (e.g. `numpy` array) should this image be stored in," and "what is the shape of that structure?"
