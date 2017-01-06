@@ -186,7 +186,7 @@ Let's get an idea of the input dimensions:
 ![Distribution of Image Sizes](images/DistributionOfImageSizes.png)  
 Notice that the above plot suggests that the vast majority of the images are less than 50-or-so pixels tall, and many of them are less than 100 pixels wide.
 
-That is, we can probably downsize these images to 64 x 64 and (hopefully) not lose a lot of information.
+That is, we can probably downsize these images to 54 x 54 and (hopefully) not lose a lot of information.
 ![Distribution of Image Sizes Histogram](images/DistributionOfImageSizesHist.png)  
 Let's go with 64x64, the size used by Goodfellow et al.  
 But hold on, we can't just rescale our input images, or we'd get too-squished input like this:  
@@ -344,12 +344,273 @@ def subtractMean(img):
 ```
 ![64 x 64 Image with Mean Subtracted](images/PipelineSubtractMean.png)  
 #### Convolutional Neural Net
+We will be building a neural net to output the digits from input images.  The architecture will try to follow, as closely as possible, that architecture described by Goodfellow et al., below:
+>Our best architecture consists of eight convolutional hidden layers, one locally connected hidden layer, and two densely connected hidden layers. All connections are feedforward and go from one layer to the next (no skip connections).  
+>
+The first hidden layer contains maxout units (Goodfellow et al., 2013) (with three filters per unit) while the others contain rectifier units (Jarrett et al., 2009; Glorot et al., 2011).  
+> 
+The number of units at each spatial location in each layer is [48, 64, 128, 160] for the first four layers and 192 for all other locally connected layers. The fully connected layers contain 3,072 units each.  
+>
+Each convolutional layer includes max pooling and subtractive normalization. The max pooling window size is 2 × 2. The stride alternates between 2 and 1 at each layer, so that half of the layers don’t reduce the spatial size of the representation.  
+>
+All convolutions use zero padding on the input to preserve representation size. The subtractive normalization operates on 3x3 windows and preserves representation size.  
+>
+All convolution kernels were of size 5 × 5. We trained with dropout applied to all hidden layers but not the input.
+
+Below is a sketch of the model architecture that best comports with this description:
+```
+(0) input (54 x 54 x 3 image)
+(1) same-pad 5 × 5 conv  [48] -> 2 × 2 max pooling (stride 2) -> 3 × 3 subtractive normalization -> dropout -> 3-filter maxout
+(2) same-pad 5 × 5 conv  [64] -> 2 × 2 max pooling (stride 1) -> 3 × 3 subtractive normalization -> dropout -> ReLU
+(3) same-pad 5 × 5 conv [128] -> 2 × 2 max pooling (stride 2) -> 3 × 3 subtractive normalization -> dropout -> ReLU
+(4) same-pad 5 × 5 conv [160] -> 2 × 2 max pooling (stride 1) -> 3 × 3 subtractive normalization -> dropout -> ReLU
+(5) same-pad 5 × 5 conv [192] -> 2 × 2 max pooling (stride 2) -> 3 × 3 subtractive normalization -> dropout -> ReLU
+(6) same-pad 5 × 5 conv [192] -> 2 × 2 max pooling (stride 1) -> 3 × 3 subtractive normalization -> dropout -> ReLU
+(7) same-pad 5 × 5 conv [192] -> 2 × 2 max pooling (stride 2) -> 3 × 3 subtractive normalization -> dropout -> ReLU
+(8) same-pad 5 × 5 conv [192] -> 2 × 2 max pooling (stride 1) -> 3 × 3 subtractive normalization -> dropout -> ReLU
+(9) flatten
+(10) fully-connected [3072] -> dropout
+(11) fully-connected [3072] -> dropout
+(12) output
+```
+Note that the output itself is relatively complex (see image below), and will be dealt with in more detail after the hidden layers.
+![Goodfellow et al. Neural Net Architecture](images/architecture.png)  
+Note that the 128 x 128 x 3 referred to above is for the image processing pipeline for the *private* SVHN dataset, to which only Google has access.  
+For the *public* SVHN dataset, that portion of the above graphic should read 54 x 54 x 3, in accordance with the preprocessing pipeline which Goodfellow et al. define in their section 5.1, which this notebook attempts to recreate.  
+
+This model architecture will be implemented in `TensorFlow`, using `Keras` as a front-end to aid in layer construction and management.
+
+##### The "Goodfellow et al." Model
+```python
+img_channels = 3
+img_rows = 54
+img_cols = 54
+
+# Layer 0: Input
+x = Input((img_rows, img_cols, img_channels))
+
+# Layer 1: 48-unit maxout convolution
+y = Convolution2D(nb_filter = 48, nb_row = 5, nb_col = 5, border_mode="same", name="1conv")(x)
+y = MaxPooling2D(pool_size = (2, 2), strides = (2, 2), border_mode="same", name="1maxpool")(y)
+# y = SubtractiveNormalization((3,3))(y)
+y = Dropout(0.25, name="1drop")(y)
+# y = MaxoutDense(output_dim = 48, nb_feature=3)(y)
+y = Activation('relu', name="1activ")(y)
+
+# Layer 2: 64-unit relu convolution
+y = Convolution2D(nb_filter = 64, nb_row = 5, nb_col = 5, border_mode="same", name="2conv")(y)
+y = MaxPooling2D(pool_size = (2, 2), strides = (1, 1), border_mode="same", name="2maxpool")(y)
+# y = SubtractiveNormalization((3,3))(y)
+y = Dropout(0.25, name="2drop")(y)
+y = Activation('relu', name="2activ")(y)
+
+# Layer 3: 128-unit relu convolution
+y = Convolution2D(nb_filter = 128, nb_row = 5, nb_col = 5, border_mode="same", name="3conv")(y)
+y = MaxPooling2D(pool_size = (2, 2), strides = (2, 2), border_mode="same", name="3maxpool")(y)
+# y = SubtractiveNormalization((3,3))(y)
+y = Dropout(0.25, name="3drop")(y)
+y = Activation('relu', name="3activ")(y)
+
+# Layer 4: 160-unit relu convolution
+y = Convolution2D(nb_filter = 160, nb_row = 5, nb_col = 5, border_mode="same", name="4conv")(y)
+y = MaxPooling2D(pool_size = (2, 2), strides = (1, 1), border_mode="same", name="4maxpool")(y)
+# y = SubtractiveNormalization((3,3))(y)
+y = Dropout(0.25, name="4drop")(y)
+y = Activation('relu', name="4activ")(y)
+
+# Layer 5: 192-unit relu convolution
+y = Convolution2D(nb_filter = 192, nb_row = 5, nb_col = 5, border_mode="same", name="5conv")(y)
+y = MaxPooling2D(pool_size = (2, 2), strides = (2, 2), border_mode="same", name="5maxpool")(y)
+# y = SubtractiveNormalization((3,3))(y)
+y = Dropout(0.25, name="5drop")(y)
+y = Activation('relu', name="5activ")(y)
+
+# Layer 6: 192-unit relu convolution
+y = Convolution2D(nb_filter = 192, nb_row = 5, nb_col = 5, border_mode="same", name="6conv")(y)
+y = MaxPooling2D(pool_size = (2, 2), strides = (1, 1), border_mode="same", name="6maxpool")(y)
+# y = SubtractiveNormalization((3,3))(y)
+y = Dropout(0.25, name="6drop")(y)
+y = Activation('relu', name="6activ")(y)
+
+# Layer 7: 192-unit relu convolution
+y = Convolution2D(nb_filter = 192, nb_row = 5, nb_col = 5, border_mode="same", name="7conv")(y)
+y = MaxPooling2D(pool_size = (2, 2), strides = (2, 2), border_mode="same", name="7maxpool")(y)
+# y = SubtractiveNormalization((3,3))(y)
+y = Dropout(0.25, name="7drop")(y)
+y = Activation('relu', name="7activ")(y)
+
+# Layer 8: 192-unit relu convolution
+y = Convolution2D(nb_filter = 192, nb_row = 5, nb_col = 5, border_mode="same", name="8conv")(y)
+y = MaxPooling2D(pool_size = (2, 2), strides = (1, 1), border_mode="same", name="8maxpool")(y)
+# y = SubtractiveNormalization((3,3))(y)
+y = Dropout(0.25, name="8drop")(y)
+y = Activation('relu', name="8activ")(y)
+
+# Layer 9: Flatten
+y = Flatten()(y)
+
+# Layer 10: Fully-Connected Layer
+y = Dense(3072, activation=None, name="fc1")(y)
+
+# Layer 11: Fully-Connected Layer
+y = Dense(3072, activation=None, name="fc2")(y)
+
+length = Dense(7, activation="softmax", name="length")(y)
+digit1 = Dense(11, activation="softmax", name="digit1")(y)
+digit2 = Dense(11, activation="softmax", name="digit2")(y)
+digit3 = Dense(11, activation="softmax", name="digit3")(y)
+digit4 = Dense(11, activation="softmax", name="digit4")(y)
+digit5 = Dense(11, activation="softmax", name="digit5")(y)
+
+model = Model(input=x, output=[length, digit1, digit2, digit3, digit4, digit5])
+
+model.compile(loss='sparse_categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
+
+y_val = [y0_test, y1_test, y2_test, y3_test, y4_test, y5_test]
+
+model.fit(X_train,
+          [y0_train, y1_train, y2_train, y3_train, y4_train, y5_train],
+          validation_data=(X_test,
+                           y_val),
+          nb_epoch=10,
+          batch_size=200,
+          verbose=1)
+```
+Note above that some portions of the layers described by Goodfellow et al., e.g. the "subtractive normalization" and the "maxout", have not been implemented in the above model.
+
+That is largely because *how* to implement such features has escaped me, despite [reading more about them](http://www.jmlr.org/proceedings/papers/v28/goodfellow13.pdf) and [engaging the Udacity machine learning community](https://discussions.udacity.com/t/goodfellow-et-al-2013-architecture/202363/2) on this topic.
+
+This is not to say that these features are impossible to implement (indeed, I believe that Goodfellow et al. did actually implement them), but rather to note that, in the absence of an open contribution by Goodfellow et al. to the machine learning community, the effort at recreating them is akin to reinventing them, and that effort is a difficult one.
+
+I have, however, inserted those features into my model where I estimate that they *would* go, if they were implemented.  Of course, this is just a rough estimate, but it is preferable to excluding these features altogether from my implementation.
+
 
 ### Refinement
+The [discussion of](https://discussions.udacity.com/t/goodfellow-et-al-2013-architecture/202363) Goodfellow et al.'s architecture is representative of the refinements which I made to the model, prior to its implementation.
 
+Largely, this represents efforts to parse the language of Goodfellow et al. into a viable model architecture.
+
+Another attempted refinement to the model was to share weights between the digit classifiers on the output layer.  My hypothesis was that each digit classifier is actually completing the same task, and so there is inherent waste in training multiple different classifiers to do the same thing (especially since the 4th and 5th digit classifiers would be expected to output 'no digit' the vast majority of the time).
+
+While I still assert that there should be a single digit classifier in the output layer, my implementation of this idea was lacking in the attempted refinement: Each digit classifier output the same class for each image.
+
+This makes a good deal of sense, and one need only consult Goodfellow et al.'s convolutional neural net output layer sketch in the [section](#convolutional-neural-net) above to see why:  Each digit classifier is being fed the same transformed image as input.  That is, for a given H, it is ludicrous to expect a classifier to output one class, and then expect it to output a different class for the exact same H.
+
+Unfortunately, then, I was unable to make this refinement work, and I would suggest that the branching in the neural net would need to occur earlier than the digit classifiers, so that (in theory) the model can learn to pass the unified digit classifier the portion of the image which is relevant for it to classify.  That way, we can train the output layer to recognize digits, while allowing the hidden layers to complete the segmentation and localization tasks.
 ## Results
 ### Model Evaluation and Validation
+#### The "Goodfellow et al." Model
+The evaluation output on the model meant to approximate Goodfellow et al. is as follows:
+```
+loss        33.787814994744288
+length_loss  5.8117896247282284
+digit1_loss 14.113818473979387
+digit2_loss 11.330030459674594
+digit3_loss  2.3841670357126388
+digit4_loss  0.14677591633234982
+digit5_loss  0.0012344748806895002
+length_acc   0.63942454850633534
+digit1_acc   0.12434955617001854
+digit2_acc   0.29706152432512939
+digit3_acc   0.852081420244994
+digit4_acc   0.99089378636657621
+digit5_acc   0.99992347719620445
+```
+Notably, whole-sequence transcription accuracy was `0.0%`.
+
+First, let's discuss the length accuracy.  
+Note from above that ~18,000 of the 33,403 (or ~54%) of the training examples had a length of `2`.  
+Thus, it's within the realm of possibility that 63.9% of the testing examples also had a length of `2`, and that the model is simply always guessing `2`.  
+I am not convinced that the model learned how to determine the length representation.
+
+Next, let's discuss digit1 accuracy.  
+At ~12.4%, it's completely within the realm of possibility that the model is simply guessing the same number for each image it sees.  This accuracy is almost certainly not better than random chance, which strongly suggests that the model did not learn how to represent the first digit of an image.
+
+Next, let's discuss the remaining digit accuracies.
+Recall that very few examples in the training set had a fifth or fourth digit.  
+Accordingly, it is almost certainly the case that the fourth and fifth digit classifiers are simply guessing, for every image they see, "no digit."  
+This is probably occurring with the third digit as well.  Although ~27% of the training examples had a third digit, it seems possible at least that only 15% of testing examples were longer than two digits, meaning that if this classifier was just guessing "no digit," it would have achieved an accuracy of 85%.
+While it is tempting to think that perhaps the model learned *some* way of representing the second digit in the image, albeit poorly, it is just as possible that it is guessing the same digit each time, and there just happens to be a second digit which occurs with ~30% frequency in the testing set.
+
+Overall, the performance of this model is disappointing, especially considering its depth of representation.  
+It is unclear which architectural changes could be taken to improve the performance of this model.  
+
+Accordingly, for comparison, I also tested the following model from a Google Groups [discussion](https://groups.google.com/forum/#!topic/keras-users/UIhlW423YFs).
+
+#### The "Ritchie Ng" Model
+```python
+x = Input((img_rows, img_cols, img_channels))
+y = Convolution2D(32, 3, 3, border_mode='same')(x)
+y = Activation('relu')(y)
+y = Convolution2D(32, 3, 3, border_mode='same')(y)
+
+y = Activation('relu')(y)
+y = MaxPooling2D((2,2), strides=(2,2))(y)
+y = Dropout(0.5)(y)
+
+y = Flatten()(y)
+y = Dense(1024, activation="relu")(y)
+length = Dense(7, activation='softmax')(y)
+digit_1 = Dense(11, activation='softmax')(y)
+digit_2 = Dense(11, activation='softmax')(y)
+digit_3 = Dense(11, activation='softmax')(y)
+digit_4 = Dense(11, activation='softmax')(y)
+digit_5 = Dense(11, activation='softmax')(y)
+branches = [length, digit_1, digit_2, digit_3, digit_4, digit_5]
+model = Model(input=x, output=branches)
+sgd = SGD(lr=0.01, decay=1e-6, momentum=0.9, nesterov=True)
+model.compile(loss='sparse_categorical_crossentropy', optimizer=sgd, metrics=['categorical_accuracy'])
+history = model.fit(X_train,
+          [y0_train, y1_train, y2_train, y3_train, y4_train, y5_train],
+          validation_data=(X_test,
+                           y_val),
+          nb_epoch=10,
+          batch_size=200,
+          verbose=1)
+```
+Unfortunately, performance on this model was similar to the performance on the Goodfellow et al. model:
+```
+  Training:
+loss        35.911776717912154
+length_loss  7.3694877039778772
+digit1_loss 11.65790105544124
+digit2_loss 12.014987309202734
+digit3_loss  4.2729705319234146
+digit4_loss  0.59208743797327312
+digit5_loss  0.0043430576070498062
+length_acc   0.54278186844977128
+digit1_acc   0.27671995566645163
+digit2_acc   0.25456559317084204
+digit3_acc   0.73489611498303531
+digit4_acc   0.9632656717006336
+digit5_acc   0.99973055531354615
+
+  Testing:
+loss        31.235912252939329
+length_loss  5.8117910404981803
+digit1_loss 11.561913261436928
+digit2_loss 11.330033568238351
+digit3_loss  2.3841658736866185
+digit4_loss  0.1467749148807943
+digit5_loss  0.0012335209788844094
+length_acc   0.6394245511244151
+digit1_acc   0.28267523494013452
+digit2_acc   0.29706152324870633
+digit3_acc   0.85208142352899641
+digit4_acc   0.99089379397451527
+digit5_acc   0.99992347726918229
+
+Whole-Sequence Accuracy: 0.0%
+```
+Notable, however, is the difference between the digit1 accuracies in the Goodfellow et al. model and the Ritchie Ng model.
+
+It must be the case that, however poorly, the Ritchie Ng model has learned how to discern the first digit of the numbers with better than random chance.  While that's not a sweeping victory, it is at least an interesting result of this model.
 ### Justification
+The benchmark established above for this problem is to achieve whole-sequence transcription accuracy of at least 96%.
+
+With both the Goodfellow et al. and the Ritchie Ng models, the actual whole-sequence accuracy achieved was 0.0%.
+
+Accordingly, it is not the case that either model can be said to have solved the problem adequately.
 
 ## Conclusion
 ### Free-Form Visualization
