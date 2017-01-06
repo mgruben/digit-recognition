@@ -615,4 +615,38 @@ Accordingly, it is not the case that either model can be said to have solved the
 ## Conclusion
 ### Free-Form Visualization
 ### Reflection
+#### Goodfellow et al.
+Unfortunately, I was unable to reproduce the performance obtained by [Goodfellow et al.](https://arxiv.org/pdf/1312.6082v4.pdf), namely a whole-sequence transcription accuracy of ~96% on the public SVHN dataset.
+
+I am, however, able to identify factors which could contribute to the discrepancy between their performance and mine:  
+* Architectural Differences  
+   * The output layer that Goodfellow et al. use, namely six separate softmax classifiers, differs from my mine.  Specifically, the *n*th classifier does **not** backpropagate when the *n*th digit is not present, however classifiers backpropagate on every input.  There could be some clever way of "turning off" the classifiers when they're not supposed to be active, but I haven't found it.  
+   * Maxout layers are not present in my architecture, although their presence is explicitly noted by Goodfellow et al.  This is largely because I [could not discern](https://discussions.udacity.com/t/goodfellow-et-al-2013-architecture/202363/5) what was meant by "maxout layer".  That's not to assert that it's impossible to understand, but rather to convey that I didn't understand.  
+   * Subtractive normalization is not present in my architecture, although (perhaps unrelated except by semantics) I do subtract the mean of each image during preprocessing before it is passed to my architecture as input, as did Goodfellow et al.  This absence is also attributable to [not knowing](https://discussions.udacity.com/t/goodfellow-et-al-2013-architecture/202363/5) what was meant by "subtractive normalization," in context.  As with maxout layers, I mean in this bullet point to convey more that I didn't understand, more than to assert that no one could understand.  
+* Library Differences
+   * For this project, I used the `Keras` frontend to Google's `TensorFlow` library, as that library is quickly becoming established in the Deep Learning community.  
+   * For their paper, Goodfellow et al. used the `DistBelief` implementation of a neural net.  Although [recreations](http://alexminnaar.com/implementing-the-distbelief-deep-neural-network-training-framework-with-akka.html) of `DistBelief` exist, and although it's possible to view `TensorFlow` as [an extension](https://en.wikipedia.org/wiki/TensorFlow#DistBelief) of `DistBelief`, `DistBelief` itself is not publicly available.  
+* Training Details
+   * For this project, I arbitrarily trained for 10 epochs within `Keras`.  I am fairly certain that this is not comparable to the "six days" of training conducted by Goodfellow et al. on "10 replicas" within `DistBelief`, but I also don't know how I could make my training regimen look closer to theirs.
+   * Although Goodfellow et al. describe their image preparation steps in laudable detail, the exact representation of their images and labels (e.g. `numpy` arrays, with one-hot-encoded labels) is left out of their paper.  As such, I've had to guess at a representation that would work.  One key difference is that "no digit" is an explicit class in my representation, which the individual classifiers need to correctly guess.  This is a departure from the Goodfellow et al. training, in which unneeded classifiers were turned on or off based on the output of the length classifier.
+   * The loss function used by Goodfellow et al. is not stated, although they do hint that "one can maximize [logarithmic digit probability] on the training set using a generic method like stochastic gradient descent".  Thus, my implementation has arbitrarily chosen to use the AdamOptimizer on sparse_categorical_crossentropy.
+   
+Given the number of identified differences above, it is almost not surprising that my recreation of the Goodfellow et al. model was unable to reproduce their performance.  
+
+#### Ritchie Ng
+However, fewer such differences exist between my recreation of the [Ritchie Ng](https://groups.google.com/forum/#!topic/keras-users/UIhlW423YFs) neural net and my own, and my [implementation](#Trying-a-Random-Model-from-the-Internet) of that model was also unable to reproduce its performance.  
+While that model has a whole-sequence transcription accuracy of 0%, it notably [achieved](https://groups.google.com/d/msg/keras-users/UIhlW423YFs/e2RL2p5hFAAJ) a ~92% first-digit accuracy, and an ~84% second-digit accuracy.
+
+However, while the exact `Keras` calls used to build the model described by Ritchie Ng was provided, his preprocessing scheme, and the representation he chose for his data, including the labels, was *not provided*.  This discrepancy, I would assert, leaves enough room between his experiment and mine so as to greatly hinder comparing the two.
+
 ### Improvement
+I suspect that, somewhere in this lengthy pipeline of SVHN images to neural net classifications, is a misrepresentation, a mistaken assumption, an incomplete implementation, or a combination of these, that, if identified and fixed, would allow this model to learn much better.
+
+I would assert that the fundamental approach, that of using a deep neural net to output whole sequences of digits, has been [valid for decades](https://www.youtube.com/watch?v=FwFduRA_L6Q).  
+The trouble at present is in designing a model architecture that can output whole sequences of digits as they appear in the wild, with all the visual artifacts, distortions, and extra information those wild images contain.  
+As the motivation for undertaking this project, I would assert that Goodfellow et al. have solved this problem computationally, but that their implementation, being private, cannot easily be recreated.
+
+However, to somewhat mirror the [above section](#Goodfellow-et-al.), I think the following improvements would greatly benefit this model:  
+* Implementing an output layer that turns its classifiers on and off depending on how many digits it detects in the image.  This was, in my implementation, much more easily said than done, but if it could be achieved, it would likely help the model not to learn useless features, or resort to guessing.
+* Identifying an ideal representation of the image labels.  This information is readily available (if somewhat cumbersome to work with), but it's unclear to me which representation (e.g. one-hot, continuous, etc.) would be ideal to feed to the neural net.
+* Identifying an ideal representation of the input images.  That is, what should a given image look like after pre-processing?  Not just "what type of preprocessing should be performed," but also "what structure (e.g. `numpy` array) should this image be stored in," and "what is the shape of that structure?"
