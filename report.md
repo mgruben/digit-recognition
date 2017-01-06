@@ -649,3 +649,5 @@ However, to somewhat mirror the [above section](#Goodfellow-et-al.), I think the
 * Implementing an output layer that turns its classifiers on and off depending on how many digits it detects in the image.  This was, in my implementation, much more easily said than done, but if it could be achieved, it would likely help the model not to learn useless features, or resort to guessing.
 * Identifying an ideal representation of the image labels.  This information is readily available (if somewhat cumbersome to work with), but it's unclear to me which representation (e.g. one-hot, continuous, etc.) would be ideal to feed to the neural net.
 * Identifying an ideal representation of the input images.  That is, what should a given image look like after pre-processing?  Not just "what type of preprocessing should be performed," but also "what structure (e.g. `numpy` array) should this image be stored in," and "what is the shape of that structure?"
+
+Once the above improvements have been implemented, then the further improvements discussed in the [Problem Statement](#problem-statement) can be addressed (i.e. images from the wild and digit localization).
