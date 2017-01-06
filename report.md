@@ -613,7 +613,6 @@ With both the Goodfellow et al. and the Ritchie Ng models, the actual whole-sequ
 Accordingly, it is not the case that either model can be said to have solved the problem adequately.
 
 ## Conclusion
-### Free-Form Visualization
 ### Reflection
 #### Goodfellow et al.
 Unfortunately, I was unable to reproduce the performance obtained by [Goodfellow et al.](https://arxiv.org/pdf/1312.6082v4.pdf), namely a whole-sequence transcription accuracy of ~96% on the public SVHN dataset.
