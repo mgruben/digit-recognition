@@ -91,7 +91,36 @@ This project will measure its performance through **whole-sequence accuracy**.
 
 ## Analysis
 ![Sample Collection](images/Sample.png)
-A random sample of images from the SVHN training dataset.
+Shown above is a random sample of images from the SVHN training dataset.  
+
+The SVHN dataset, as provided [online](http://ufldl.stanford.edu/housenumbers/), already splits the full dataset into training and testing sets.  
+
+In the training set, there are 33,402 images.
+
+In the testing set, there are 13,069 images.
+
+The images in the SVHN dataset are many different sizes:
+```
+$ file *.png
+...
+28668.png:             PNG image data, 153 x 73, 8-bit/color RGB, non-interlaced
+28669.png:             PNG image data, 67 x 34, 8-bit/color RGB, non-interlaced
+2866.png:              PNG image data, 44 x 21, 8-bit/color RGB, non-interlaced
+28670.png:             PNG image data, 100 x 50, 8-bit/color RGB, non-interlaced
+28671.png:             PNG image data, 83 x 34, 8-bit/color RGB, non-interlaced
+28672.png:             PNG image data, 108 x 49, 8-bit/color RGB, non-interlaced
+...
+```
+That having been said, the distribution is remarkably similar between sets.
+
+Let's get an idea of the input dimensions:
+![Distribution of Training Set Image Sizes](images/DistributionOfTrainingImageSizes.png)  
+![Distribution of Testing Set Image Sizes](images/DistributionOfTestingImageSizes.png)  
+Notice that the above plot suggests that the vast majority of the images are less than 50-or-so pixels tall, and many of them are less than 100 pixels wide.
+
+That is, we can probably downsize these images to 54 x 54 and (hopefully) not lose a lot of information.
+![Distribution of Training Set Image Sizes Histogram](images/DistributionOfTrainingImageSizesHist.png)  
+![Distribution of Testing Set Image Sizes Histogram](images/DistributionOfTestingImageSizesHist.png)  
 
 ### Data Exploration  
 #### Label Distribution  
@@ -168,18 +197,8 @@ The benchmark for this project is that achieved by Goodfellow et al. on the publ
 96% whole-sequence accuracy.
 ## Methodology
 ### Data Preprocessing
-The images in the SVHN dataset are many different sizes:
-```
-$ file *.png
-...
-28668.png:             PNG image data, 153 x 73, 8-bit/color RGB, non-interlaced
-28669.png:             PNG image data, 67 x 34, 8-bit/color RGB, non-interlaced
-2866.png:              PNG image data, 44 x 21, 8-bit/color RGB, non-interlaced
-28670.png:             PNG image data, 100 x 50, 8-bit/color RGB, non-interlaced
-28671.png:             PNG image data, 83 x 34, 8-bit/color RGB, non-interlaced
-28672.png:             PNG image data, 108 x 49, 8-bit/color RGB, non-interlaced
-...
-```
+As mentioned in the [Analysis](#analysis) section above, the images in the training and tests sets are of varying dimensions.
+
 Unfortunately, our neural net will need its input to be consistently-sized.  
 That is to say, we need to pick *a* size to which we resize all images, before we feed them to the neural net.
 
@@ -190,15 +209,10 @@ A note here:
 Just because we downsize the image doesn't mean that there is significant information loss.  
 A 3200x4800 image of the letter `A` is probably still faithfully represented if downsized to 32x48, or smaller.
 
-Let's get an idea of the input dimensions:
-![Distribution of Image Sizes](images/DistributionOfImageSizes.png)  
-Notice that the above plot suggests that the vast majority of the images are less than 50-or-so pixels tall, and many of them are less than 100 pixels wide.
-
-That is, we can probably downsize these images to 54 x 54 and (hopefully) not lose a lot of information.
-![Distribution of Image Sizes Histogram](images/DistributionOfImageSizesHist.png)  
-Let's go with 64x64, the size used by Goodfellow et al.  
+Since we determined [above](#analysis) that a large number of the images are less than 50 pixels tall by 100 pixels wide, let's decide to resize all images to 64x64, the size used by Goodfellow et al.  
 But hold on, we can't just rescale our input images, or we'd get too-squished input like this:  
 ![Squished Input](images/squished.png)  
+
 We need to be more clever about how we downsize.
 #### Clever Image Preprocessing
 [Goodfellow et al.](https://arxiv.org/pdf/1312.6082v4.pdf) describe the following steps to their image preprocessing:  
