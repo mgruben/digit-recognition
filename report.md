@@ -93,11 +93,13 @@ This project will measure its performance through **whole-sequence accuracy**.
 ![Sample Collection](images/Sample.png)
 Shown above is a random sample of images from the SVHN training dataset.  
 
-The SVHN dataset, as provided [online](http://ufldl.stanford.edu/housenumbers/), already splits the full dataset into training and testing sets.  
+The SVHN dataset, as provided [online](http://ufldl.stanford.edu/housenumbers/), already splits the full dataset into training and testing sets.  The datasets also contain metadata files, which give the coordinates of rectangles that "[bound](#a-relevant-dataset)" the individual digits, the number of digits in the corresponding image, and the labels of the digits in that image.
 
 In the training set, there are 33,402 images.
 
 In the testing set, there are 13,069 images.
+
+All images in both sets are formatted as PNGs.
 
 The images in the SVHN dataset are many different sizes:
 ```
