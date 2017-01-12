@@ -192,6 +192,45 @@ This is partly a desire to create an autonomous digit recognition platform, bala
 
 The neural net implementation is, broadly speaking, a deep convolutional neural net, so-called because it will have several layers between the input and the output layers ("hidden" layers), some of which perform [convolutions](http://cs231n.github.io/convolutional-networks/) on the inputs.
 
+#### Why Neural Networks?
+This is an excellent question, the answer to which unfortunately seems mysterious and dodgy:  
+Because, although we don't *fully* understand why, neural networks just work.
+
+If we were to break down the above 4 steps even further, we're producing outputs from inputs, in a way that is deterministic and reproducible.  So, to state that differently, we're approximating a function, from images, to labels.  
+
+We're familiar with functions from gradeschool; they're the things that are of the form `y = a * x + b`, or perhaps `y = x ^ 2`, where `y` is our output, and `x` is our input.
+
+**So why don't we just define something like that for our image classification task?**
+
+Well, in a way we are, and in a way we very much aren't.  
+Actually, it turns out that we can approximate discrete outputs (such as, this image represents the digit `0`, or `5`) by using things like the `sigmoid` in our function definition.  
+This "output" layer would look at the probability that the given input belongs to each one of the possible output classes, then picks the class that's the most likely and outputs that.  
+But, how do we construct a function that maps images of digits to likelihoods?
+
+In short, and remarkably, that's done without human intervention.  We have a general idea that there is some matrix-like representation of weights (by which the input should be multiplied) and biases (to which the input should be added) that maps input images to likelihood of output labels.
+
+We also know, from calculus, and from the continuous properties of the `sigmoid` defined above, that since our class probabilities are continuous, we can identify the "direction" in which those probabilities increase or decrease.  That is, we can identify how the weights and biases identified above should be changed so that the probabilities they output more closely match the actual label for the input data.
+
+**Why go through all this trouble?**  
+
+Why aren't we just defining `y = a1 * x1 + a2 * x2 + ... an * xn + b` in a more intuitive and transparent way?  
+We inadvertently obscure the weights and biases in our function approximation in our attempt to automate our search for them.  We actually have no idea what those `a`s and `b`s should be, but because we can compute the gradient of the probability output, and because we know what the output should be for a given image, we can tweak the weights and biases ever so slightly in order to make the "correct" label more likely for the given image.
+
+Vizualizing how the `a`s and `b`s change would probably be easy enough if we imagined that our function has ~20 or so of them.  Unfortunately, with the breadth and depth of matrix multiplications needed (at least, apparently needed, as gleaned from practice) to accurately map input images to output classes, we have thousands and thousands of `a`s and `b`s, and the human mind reels at trying to keep track of them all.
+
+Additionally, there are clever techniques that are applied in addition to a raw matrix multiplication.  
+One such technique is to condense a region of a matrix into a single value based off of maximums or minimums, which is known as **max pooling**.  This serves to reduce the size of the calculation (by reducing the number of values), and [is thought](https://en.wikipedia.org/wiki/Convolutional_neural_network#Pooling_layer) to limit overfitting.  
+This condensation can also be accomplished by multiplying the values in that region of the matrix by values in an equally-sized matrix (a "kernel"), and then summing all of the resulting values.  This process is known as a **convolution**, and functions to [recognize spatial features](https://en.wikipedia.org/wiki/Convolutional_neural_network#Convolutional_layer) in the input image.  
+Yet another technique employed in neural networks is to randomly set a fraction of the incoming values to `0`, which is known as **dropout**.  This technique also reduces the size of the calculation, and [is thought](https://en.wikipedia.org/wiki/Convolutional_neural_network#Dropout) to limit overfitting.
+
+These techniques (and many more like them) further complicate the task of calculating how the weights and biases should change in the internal representation of a neural network in order to make it more likely that it outputs the correct label, but it does not make that task impossible.  The output probabilities are still smooth and continuous, and so calculus tells us that we can calculate how to change our `a`s and `b`s to make a better image recognizer.
+
+And so, knowing that we understand calculus, and knowing that we understand matrix multiplications, we initialize a set of weights and biases with random values, then use the gradient to walk towards a more-accurate image-to-digit classifier.
+
+Giving up this level of control is mathematically frightening, but it's probably the only way at present to arrive at a collection of `a`s and `b`s that can recognize digits in images, without needing to take years to hand-calculate how best to change them to increase accuracy.
+
+
+#### More Info
 For more details about the algorithms and techniques employed during [preprocessing](#image-preprocessing) and [model implementation](#convolutional-neural-net), please see those sections respectively.
 
 ### Benchmark  
