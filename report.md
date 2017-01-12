@@ -95,6 +95,7 @@ A random sample of images from the SVHN training dataset.
 
 ### Data Exploration  
 #### Label Distribution  
+##### Training Set
 Recall that the labels the SVHN dataset presents us with are numbers in the inclusive range (1, 10), where the labels 1 through 9 represent the digits 1 through 9, and the label 10 represents the digit 0.
 
 So, what we see is fascinating: The digits are not uniformly distributed.  
@@ -108,6 +109,13 @@ Revisiting our narrative from above, if we were to pick a digit at random from o
 
 This is important to note, since if we see our model is correctly classify classifying 20% of the data, it could be the case that our model is just guessing `1` for every classification.
 
+##### Testing Set
+Let's also look at this distribution for the testing set, although generally it's a bad idea to peer into the testing set too much prior to training, since knowledge of what the test set looks like invariably influences model-building decisions.
+![Testing Set Label Frequency](images/TestingSetLabelFrequency.png)  
+It appears that the distribution of labels in the testing set is roughly equivalent to the distribution of labels in the training set, but let's plot a probability chart to make that comparison easier.  
+![Testing Set Label Probability](images/TestingSetLabelProbability.png)  
+It would appear, then, that the distributions between the training set and the testing set are comparable.  
+This is good to know, since it helps to assure us that we can reason about performance on the testing set (and, hopefully by extension, about performance on images outside of the SVHN dataset), by focusing our efforts on mastering the training set.  
 #### Image Cardinality
 What is the distribution of the number of digits per image in the SVHN dataset?  
 ![Training Set Digit-Count Frequency](images/TrainingSetDigit-CountFrequency.png)  
