@@ -407,6 +407,7 @@ def subtractMean(img):
 ```
 ![64 x 64 Image with Mean Subtracted](images/PipelineSubtractMean.png)  
 #### Convolutional Neural Net
+##### Overview
 We will be building a neural net to output the digits from input images.  The architecture will try to follow, as closely as possible, that architecture described by Goodfellow et al., below:
 >Our best architecture consists of eight convolutional hidden layers, one locally connected hidden layer, and two densely connected hidden layers. All connections are feedforward and go from one layer to the next (no skip connections).  
 >
@@ -444,14 +445,34 @@ Below is a sketch of the model architecture that best comports with this descrip
 (11) fully-connected [3072] -> dropout
 (12) output
 ```
+##### Critical Analysis
+Goodfellow et al. praise the depth of their model, going so far as to "hypothesize that for such a complicated task, depth is crucial to achieve an efficient representation of the task."
+
+With this in mind, the model that Goodfellow et al. present is best understood as a deep neural network *tabula rasa*, whereby enough parameter space is afforded the neural network that it should be able to learn an accurate function approximation of input images to digit classes.
+
+It is noteworthy that Goodfellow et al. seem to repeat the same (1) convolution, (2) max pooling, (3) subtractive normalization, (4) dropout, and (5) ReLU pattern throughout their model.
+
+While Goodfellow et al. do not elaborate much on the reasons behind this precise layer construction, they do assert that their goal in constructing the overall model is that "the earlier layers can solve the localization and segmentation tasks ...  so that later layers can focus on just recognition," thus unifying the traditional steps of digit "localization, segmentation, and recognition." (p8, p2)
+
+The "earlier layers," then, are best understood as layers `(1)` through `(8)` in the above sketch.  These layers, according to Goodfellow et al., perform the tasks of localization and segmentation of digits (that is, of identifying where the digits are in the image, and of separating one digit from another).  
+**1.** The convolutions, although not explicitly acknowledged as performing this function by Goodfellow et al., often serve to perform low-level [image-feature recognition](https://youtu.be/py5byOOHZM8?t=256), such as horizontal or vertical edges, or corners.  
+**2.** Goodfellow et al. assert that the max pooling is useful since it helps "[the neural] network be robust to small translations of the input."  That would be a particularly useful property for the network to have here, since a given house number should output the exact same sequence of digits whether it appears in the top left corner or bottom right corner or anywhere else in the image.  
+**3.** Goodfellow et al. do not discuss what a "subtractive normalization" is, other than stating that it "operates on 3x3 windows and preserves representation size."  This dearth of discussion led me to float the question in the [Udacity forums](https://discussions.udacity.com/t/goodfellow-et-al-2013-architecture/202363), but unfortunately I was unable even there to ascertain what the term means.  As such, that operation has not been implemented in [my recreation](#the-goodfellow-et-al-model) of the Goodfellow et al. model.  
+**4.** Goodfellow et al. do not explicitly discuss why they chose to apply dropout, but they do hint at some possible reasons.  On page 6 of their paper, they mention that, when training their model on the Internal Street View Dataset, "[they] did not see significant overfitting like [they] saw in SVHN so [they] did not use dropout."  This suggests that dropout is only applied as a fix for overfitting, and that in the presence of sufficient data, it's not necessary or useful.  Indeed, that interpretation is further supported by Goodfellow et al.'s statement that dropout "tends to increase training time, and our largest models are already very costly to train."  Aside from the desire to avoid overfitting, Goodfellow et al. also nod towards the interesting results obtained by Hinton et al. in 2012 with dropout training (arXiv:1207.0580).  
+**5.** Goodfellow et al. do not explicity mention "rectified linear units" (or ReLUs for short), though they do mention "rectifier units."  Unfortunately, "rectifier units" in modern parlance could accurately describe a [wide range](https://keras.io/layers/advanced-activations/) of existing activation units.  As such, it is assumed (somewhat arbitrarily) that when Goodfellow et al. mention "rectifier units," they are referring to [ReLUs](https://en.wikipedia.org/wiki/Rectifier_(neural_networks)).
+
+The "later layers," accordingly, are best understood as layers `(9)` through `(11)` above.  
+The flatten layer is best understood as a traditional intermediate step, since the fully-connected layers are traditionally passed flattened input.  
+Goodfellow et al. do not discuss the reasoning behind using fully-connected layers, although these layers [are commonly](http://cs231n.github.io/convolutional-networks/#layerpat) used near the end of the deep neural network.  As such, it seems likely that Goodfellow et al. did not feel the need to reinvent a perfectly good wheel.  
+
+
 Note that the output itself is relatively complex (see image below), and will be dealt with in more detail after the hidden layers.  
 ![Goodfellow et al. Neural Net Architecture](images/architecture.png)  
 Note that the 128 x 128 x 3 referred to above is for the image processing pipeline for the *private* SVHN dataset, to which only Google has access.  
 For the *public* SVHN dataset, that portion of the above graphic should read 54 x 54 x 3, in accordance with the preprocessing pipeline which Goodfellow et al. define in their section 5.1, which this notebook attempts to recreate.  
-
+##### Implementation
 This model architecture will be implemented in `TensorFlow`, using `Keras` as a front-end to aid in layer construction and management.
 
-##### The "Goodfellow et al." Model
 ```python
 img_channels = 3
 img_rows = 54
