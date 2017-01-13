@@ -627,7 +627,12 @@ While it is tempting to think that perhaps the model learned *some* way of repre
 Overall, the performance of this model is disappointing, especially considering its depth of representation.  
 It is unclear which architectural changes could be taken to improve the performance of this model.  
 
-Accordingly, for comparison, I also tested the following model from a Google Groups [discussion](https://groups.google.com/forum/#!topic/keras-users/UIhlW423YFs).
+The below image conveys the predictive strategy of the above model:  
+The length is always 2, the first digit is always 3, and all subsequent digits are "no digit."
+![Goodfellow Predictive Strategy](images/predictionsGoodfellow.png)  
+Recall that the images above have been [mean-subtracted](#subtract-the-mean-of-the-image), and so they display false color where the pixel doesn't have a positive value.  Above, I've subtracted the most-negative pixel from the entire image, which mostly restores the color, but which causes an off-color speck where the pixel value is `0`.
+
+For comparison, I also tested the following model from a Google Groups [discussion](https://groups.google.com/forum/#!topic/keras-users/UIhlW423YFs).
 
 #### The "Ritchie Ng" Model
 ```python
@@ -697,6 +702,11 @@ Whole-Sequence Accuracy: 0.0%
 Notable, however, is the difference between the digit1 accuracies in the Goodfellow et al. model and the Ritchie Ng model.
 
 It must be the case that, however poorly, the Ritchie Ng model has learned how to discern the first digit of the numbers with better than random chance.  While that's not a sweeping victory, it is at least an interesting result of this model.
+
+Indeed, this model has adopted a prediction strategy similar to the Goodfellow et al. model:  
+The length is always 2, the first digit is always 1, and all subsequent digits are "no digit."
+![Ng Predictive Strategy](images/predictionsNg.png)  
+
 ### Justification
 The benchmark established above for this problem is to achieve whole-sequence transcription accuracy of at least 96%.
 
